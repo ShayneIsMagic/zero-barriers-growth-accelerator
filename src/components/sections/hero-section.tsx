@@ -4,7 +4,15 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Check, TrendingUp, Zap, Target, ArrowRight, Play, Star } from 'lucide-react';
+import {
+  Check,
+  TrendingUp,
+  Zap,
+  Target,
+  ArrowRight,
+  Play,
+  Star,
+} from 'lucide-react';
 
 export function HeroSection() {
   const features = [

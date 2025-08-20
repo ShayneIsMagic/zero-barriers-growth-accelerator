@@ -198,10 +198,10 @@ export class RateLimitError extends AnalysisError {
       provider,
       429
     );
-    this.retryAfter = retryAfter;
+    this.retryAfter = retryAfter || undefined;
   }
 
-  retryAfter?: number;
+  retryAfter: number | undefined;
 }
 
 export class TimeoutError extends AnalysisError {

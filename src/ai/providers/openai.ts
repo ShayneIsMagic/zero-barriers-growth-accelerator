@@ -48,7 +48,6 @@ export class OpenAIProvider implements AnalysisProvider {
         temperature: 0.1, // Low temperature for consistent results
         max_tokens: 4000,
         response_format: { type: 'json_object' },
-        timeout: options?.timeout || 45000,
       });
 
       const response = completion.choices[0]?.message?.content;
@@ -102,7 +101,7 @@ export class OpenAIProvider implements AnalysisProvider {
         );
       }
 
-      if (error.name === 'TimeoutError') {
+      if (error && typeof error === 'object' && 'name' in error && error.name === 'TimeoutError') {
         throw new TimeoutError(this.name, options?.timeout || 45000);
       }
 
@@ -125,7 +124,6 @@ export class OpenAIProvider implements AnalysisProvider {
         model: 'gpt-3.5-turbo',
         messages: [{ role: 'user', content: 'Hello' }],
         max_tokens: 5,
-        timeout: 10000,
       });
 
       return response.choices.length > 0;
@@ -268,7 +266,7 @@ Provide a comprehensive analysis in JSON format with the following structure:
     return prompt;
   }
 
-  private calculateConfidence(analysis: any): number {
+  private calculateConfidence(analysis: Record<string, unknown>): number {
     // Calculate confidence based on analysis completeness and score consistency
     let confidence = 0.8; // Base confidence
 
@@ -289,10 +287,10 @@ Provide a comprehensive analysis in JSON format with the following structure:
 
     // Check for reasonable score distributions
     const scores = [
-      analysis.goldenCircle?.overallScore,
-      analysis.consumerValue?.overallScore,
-      analysis.b2bValue?.overallScore,
-      analysis.cliftonStrengths?.overallScore,
+      (analysis.goldenCircle as any)?.overallScore,
+      (analysis.consumerValue as any)?.overallScore,
+      (analysis.b2bValue as any)?.overallScore,
+      (analysis.cliftonStrengths as any)?.overallScore,
     ].filter((score) => typeof score === 'number');
 
     if (scores.length > 0) {
@@ -309,8 +307,8 @@ Provide a comprehensive analysis in JSON format with the following structure:
 
     // Check for presence of detailed feedback
     if (
-      analysis.barriers?.barriers?.length > 0 &&
-      analysis.recommendations?.recommendations?.length > 0
+      (analysis.barriers as any)?.barriers?.length > 0 &&
+      (analysis.recommendations as any)?.recommendations?.length > 0
     ) {
       confidence *= 1.1;
     }

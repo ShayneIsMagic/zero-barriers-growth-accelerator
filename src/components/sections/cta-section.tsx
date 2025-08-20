@@ -272,7 +272,9 @@ export function CTASection() {
           className="mt-16 text-center"
         >
           <div className="rounded-2xl border border-white/20 bg-white/10 p-8 backdrop-blur-sm">
-            <h3 className="mb-4 text-2xl font-bold">Questions? Let&apos;s Talk</h3>
+            <h3 className="mb-4 text-2xl font-bold">
+              Questions? Let&apos;s Talk
+            </h3>
             <p className="mx-auto mb-6 max-w-2xl text-gray-300">
               Our growth experts are here to help you get started and answer any
               questions about how Zero Barriers can accelerate your business

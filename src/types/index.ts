@@ -193,7 +193,7 @@ export interface AIAnalysis {
   analysisId: string;
   model: string;
   prompt: string;
-  response: any;
+  response: Record<string, unknown>;
   tokensUsed: number;
   processingTime: number;
   confidence: number;
@@ -352,7 +352,7 @@ export interface ExportOptions {
 // Webhook Types
 export interface WebhookPayload {
   event: string;
-  data: any;
+  data: Record<string, unknown>;
   timestamp: string;
   signature: string;
 }
@@ -361,7 +361,7 @@ export interface WebhookPayload {
 export interface AppError {
   code: string;
   message: string;
-  details?: any;
+  details?: Record<string, unknown>;
   timestamp: Date;
 }
 

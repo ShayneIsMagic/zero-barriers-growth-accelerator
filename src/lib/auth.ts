@@ -1,175 +1,102 @@
+import { SignJWT, jwtVerify } from 'jose';
 import bcrypt from 'bcryptjs';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/auth/config';
-import type { UserRole } from '@/types';
+import { prisma } from './prisma';
 
-export async function hashPassword(password: string): Promise<string> {
-  const saltRounds = 12;
-  return bcrypt.hash(password, saltRounds);
+const JWT_SECRET = new TextEncoder().encode(
+  process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-in-production'
+);
+
+export interface User {
+  id: string;
+  email: string;
+  name: string;
+  role: string;
 }
 
-export async function comparePassword(
-  password: string,
-  hashedPassword: string
-): Promise<boolean> {
-  return bcrypt.compare(password, hashedPassword);
+export interface JWTPayload {
+  id: string;
+  email: string;
+  name: string;
+  role: string;
+  iat: number;
+  exp: number;
+  [key: string]: any; // Add index signature for jose compatibility
 }
 
-export async function getSession() {
-  return getServerSession(authOptions);
-}
-
-export async function getCurrentUser() {
-  const session = await getSession();
-  return session?.user ?? null;
-}
-
-export function hasRole(userRole: UserRole, requiredRole: UserRole): boolean {
-  const roleHierarchy: Record<UserRole, number> = {
-    USER: 1,
-    PRODUCER: 2,
-    C_SUITE: 3,
-    ADMIN: 4,
-    SUPER_ADMIN: 5,
-  };
-
-  return roleHierarchy[userRole] >= roleHierarchy[requiredRole];
-}
-
-export function hasPermission(userRole: UserRole, permission: string): boolean {
-  const permissions: Record<UserRole, string[]> = {
-    USER: ['analysis:read', 'analysis:create', 'recommendations:read'],
-    PRODUCER: [
-      'analysis:read',
-      'analysis:create',
-      'analysis:update',
-      'recommendations:read',
-      'recommendations:create',
-      'projects:read',
-      'projects:create',
-    ],
-    C_SUITE: [
-      'analysis:read',
-      'analysis:create',
-      'analysis:update',
-      'recommendations:read',
-      'recommendations:create',
-      'projects:read',
-      'projects:create',
-      'analytics:read',
-      'reports:read',
-      'exports:create',
-    ],
-    ADMIN: [
-      'analysis:*',
-      'recommendations:*',
-      'projects:*',
-      'analytics:*',
-      'reports:*',
-      'exports:*',
-      'users:read',
-      'users:update',
-      'organization:read',
-      'organization:update',
-    ],
-    SUPER_ADMIN: ['*'],
-  };
-
-  const userPermissions = permissions[userRole] || [];
-
-  // Check for wildcard permissions
-  if (userPermissions.includes('*')) {
-    return true;
+export class AuthService {
+  static async hashPassword(password: string): Promise<string> {
+    return bcrypt.hash(password, 12);
   }
 
-  // Check for specific permission
-  if (userPermissions.includes(permission)) {
-    return true;
+  static async verifyPassword(password: string, hashedPassword: string): Promise<boolean> {
+    return bcrypt.compare(password, hashedPassword);
   }
 
-  // Check for resource wildcard (e.g., 'analysis:*' includes 'analysis:read')
-  const [resource] = permission.split(':');
-  if (userPermissions.includes(`${resource}:*`)) {
-    return true;
+  static async createToken(user: User): Promise<string> {
+    const payload: JWTPayload = {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role,
+      iat: Math.floor(Date.now() / 1000),
+      exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 7), // 7 days
+    };
+
+    return new SignJWT(payload)
+      .setProtectedHeader({ alg: 'HS256' })
+      .setIssuedAt()
+      .setExpirationTime('7d')
+      .sign(JWT_SECRET);
   }
 
-  return false;
-}
-
-export function canAccessOrganization(
-  userOrgId: string | null,
-  targetOrgId: string,
-  userRole: UserRole
-): boolean {
-  // Super admins can access any organization
-  if (userRole === 'SUPER_ADMIN') {
-    return true;
+  static async verifyToken(token: string): Promise<JWTPayload | null> {
+    try {
+      const { payload } = await jwtVerify(token, JWT_SECRET);
+      return payload as JWTPayload;
+    } catch (error) {
+      return null;
+    }
   }
 
-  // Users can only access their own organization
-  return userOrgId === targetOrgId;
-}
+  static async authenticateUser(email: string, password: string): Promise<User | null> {
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
 
-export function canAccessAnalysis(
-  analysis: { userId: string; organizationId: string },
-  currentUser: { id: string; organizationId: string | null; role: UserRole }
-): boolean {
-  // Super admins can access any analysis
-  if (currentUser.role === 'SUPER_ADMIN') {
-    return true;
+    if (!user || !user.password) {
+      return null;
+    }
+
+    const isValidPassword = await this.verifyPassword(password, user.password);
+    if (!isValidPassword) {
+      return null;
+    }
+
+    return {
+      id: user.id,
+      email: user.email,
+      name: user.name || '',
+      role: user.role,
+    };
   }
 
-  // Organization admins can access any analysis in their org
-  if (
-    currentUser.role === 'ADMIN' &&
-    currentUser.organizationId === analysis.organizationId
-  ) {
-    return true;
-  }
+  static async createUser(email: string, password: string, name: string): Promise<User> {
+    const hashedPassword = await this.hashPassword(password);
+    
+    const user = await prisma.user.create({
+      data: {
+        email,
+        password: hashedPassword,
+        name,
+        role: 'USER',
+      },
+    });
 
-  // Users can access their own analyses
-  if (analysis.userId === currentUser.id) {
-    return true;
-  }
-
-  // C-Suite and producers can access analyses in their org
-  if (
-    (currentUser.role === 'C_SUITE' || currentUser.role === 'PRODUCER') &&
-    currentUser.organizationId === analysis.organizationId
-  ) {
-    return true;
-  }
-
-  return false;
-}
-
-export class AuthError extends Error {
-  constructor(
-    message: string,
-    public code: string,
-    public statusCode: number = 401
-  ) {
-    super(message);
-    this.name = 'AuthError';
-  }
-}
-
-export class PermissionError extends AuthError {
-  constructor(permission: string) {
-    super(
-      `Insufficient permissions. Required: ${permission}`,
-      'INSUFFICIENT_PERMISSIONS',
-      403
-    );
-  }
-}
-
-export class OrganizationAccessError extends AuthError {
-  constructor(organizationId: string) {
-    super(
-      `Access denied to organization: ${organizationId}`,
-      'ORGANIZATION_ACCESS_DENIED',
-      403
-    );
+    return {
+      id: user.id,
+      email: user.email,
+      name: user.name || '',
+      role: user.role,
+    };
   }
 }

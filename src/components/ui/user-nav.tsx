@@ -1,6 +1,6 @@
 'use client';
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -12,25 +12,28 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { User, Settings, LogOut, CreditCard, HelpCircle } from 'lucide-react';
-import { useSession, signOut } from 'next-auth/react';
+import { useAuth } from '@/contexts/auth-context';
 import { getInitials } from '@/lib/utils';
 
 export function UserNav() {
-  const { data: session } = useSession();
+  const { user, signOut } = useAuth();
 
-  if (!session?.user) {
+  if (!user) {
     return null;
   }
 
-  const { user } = session;
+  const handleSignOut = async () => {
+    await signOut();
+  };
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-8 w-8">
-            <AvatarImage src={user.image || ''} alt={user.name || ''} />
-            <AvatarFallback>{getInitials(user.name || 'User')}</AvatarFallback>
+            <AvatarFallback className="bg-growth-100 text-growth-700">
+              {getInitials(user.name)}
+            </AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
@@ -57,13 +60,16 @@ export function UserNav() {
             <CreditCard className="mr-2 h-4 w-4" />
             <span>Billing</span>
           </DropdownMenuItem>
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
           <DropdownMenuItem>
             <HelpCircle className="mr-2 h-4 w-4" />
             <span>Help & Support</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => signOut()}>
+        <DropdownMenuItem onClick={handleSignOut}>
           <LogOut className="mr-2 h-4 w-4" />
           <span>Log out</span>
         </DropdownMenuItem>

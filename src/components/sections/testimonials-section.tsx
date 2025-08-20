@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Star, Quote } from 'lucide-react';
 
 export function TestimonialsSection() {
@@ -11,7 +11,6 @@ export function TestimonialsSection() {
       name: 'Sarah Chen',
       role: 'CMO',
       company: 'TechFlow Solutions',
-      image: '/avatars/sarah-chen.jpg',
       content:
         'Zero Barriers helped us identify critical gaps in our messaging that were costing us conversions. Within 60 days, we saw a 47% increase in lead quality and a 32% improvement in close rates.',
       score: 95,
@@ -21,7 +20,6 @@ export function TestimonialsSection() {
       name: 'Marcus Rodriguez',
       role: 'VP of Marketing',
       company: 'Growth Dynamics',
-      image: '/avatars/marcus-rodriguez.jpg',
       content:
         'The AI analysis was incredibly accurate. It pinpointed exactly where our value proposition was weak and gave us actionable steps to fix it. Our conversion rates jumped 41% in just 90 days.',
       score: 92,
@@ -31,7 +29,6 @@ export function TestimonialsSection() {
       name: 'Dr. Emily Watson',
       role: 'Founder & CEO',
       company: 'Wellness Innovations',
-      image: '/avatars/emily-watson.jpg',
       content:
         "As a startup, we couldn't afford expensive marketing consultants. Zero Barriers gave us enterprise-level insights at a fraction of the cost. Our website conversion went from 2.1% to 6.8%.",
       score: 98,
@@ -41,7 +38,6 @@ export function TestimonialsSection() {
       name: 'David Kim',
       role: 'Marketing Director',
       company: 'Global Retail Corp',
-      image: '/avatars/david-kim.jpg',
       content:
         'The framework-based approach made all the difference. Instead of generic advice, we got specific, implementable recommendations that aligned with proven marketing principles.',
       score: 89,
@@ -51,7 +47,6 @@ export function TestimonialsSection() {
       name: 'Lisa Thompson',
       role: 'Head of Growth',
       company: 'SaaS Scale',
-      image: '/avatars/lisa-thompson.jpg',
       content:
         'We were struggling with our B2B messaging. The platform identified exactly which value elements we were missing and helped us craft messaging that resonated with enterprise buyers.',
       score: 94,
@@ -61,7 +56,6 @@ export function TestimonialsSection() {
       name: 'James Wilson',
       role: 'Digital Marketing Manager',
       company: 'E-commerce Plus',
-      image: '/avatars/james-wilson.jpg',
       content:
         'The speed of analysis is incredible. What used to take weeks of A/B testing, we now get in minutes. Our marketing team is 3x more productive and our results are significantly better.',
       score: 91,
@@ -139,10 +133,6 @@ export function TestimonialsSection() {
                   {/* Author */}
                   <div className="flex items-center space-x-3">
                     <Avatar className="h-10 w-10">
-                      <AvatarImage
-                        src={testimonial.image}
-                        alt={testimonial.name}
-                      />
                       <AvatarFallback className="bg-growth-100 text-growth-700">
                         {testimonial.name
                           .split(' ')

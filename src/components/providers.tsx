@@ -2,6 +2,7 @@
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from 'next-themes';
+import { AuthProvider } from '@/contexts/auth-context';
 import { useState } from 'react';
 
 interface ProvidersProps {
@@ -15,19 +16,29 @@ export function Providers({ children }: ProvidersProps) {
         defaultOptions: {
           queries: {
             staleTime: 60 * 1000, // 1 minute
-            gcTime: 10 * 60 * 1000, // 10 minutes
-            retry: (failureCount, error: any) => {
+            cacheTime: 10 * 60 * 1000, // 10 minutes
+            retry: (failureCount, error: unknown) => {
               // Don't retry on 4xx errors
-              if (error?.status >= 400 && error?.status < 500) {
+              const errorObj = error as { status?: number };
+              if (
+                errorObj?.status &&
+                errorObj.status >= 400 &&
+                errorObj.status < 500
+              ) {
                 return false;
               }
               return failureCount < 3;
             },
           },
           mutations: {
-            retry: (failureCount, error: any) => {
+            retry: (failureCount, error: unknown) => {
               // Don't retry on 4xx errors
-              if (error?.status >= 400 && error?.status < 500) {
+              const errorObj = error as { status?: number };
+              if (
+                errorObj?.status &&
+                errorObj.status >= 400 &&
+                errorObj.status < 500
+              ) {
                 return false;
               }
               return failureCount < 3;
@@ -38,15 +49,17 @@ export function Providers({ children }: ProvidersProps) {
   );
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider
-        attribute="class"
-        defaultTheme="system"
-        enableSystem
-        disableTransitionOnChange
-      >
-        {children}
-      </ThemeProvider>
-    </QueryClientProvider>
+    <AuthProvider>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
+      </QueryClientProvider>
+    </AuthProvider>
   );
 }
