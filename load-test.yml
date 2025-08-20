@@ -1,0 +1,166 @@
+# Artillery.js Load Testing Configuration
+# Tests the application under various load conditions
+
+config:
+  target: 'http://localhost:3000'
+  phases:
+    # Warm-up phase
+    - duration: 60
+      arrivalRate: 5
+      name: 'Warm-up'
+
+    # Gradual ramp-up
+    - duration: 120
+      arrivalRate: 5
+      rampTo: 50
+      name: 'Ramp-up'
+
+    # Sustained load
+    - duration: 300
+      arrivalRate: 50
+      name: 'Sustained load'
+
+    # Peak load test
+    - duration: 120
+      arrivalRate: 50
+      rampTo: 100
+      name: 'Peak load'
+
+    # Stress test (10x expected load)
+    - duration: 60
+      arrivalRate: 500
+      name: 'Stress test'
+
+  # Performance thresholds
+  ensure:
+    maxErrorRate: 1 # Max 1% error rate
+    maxResponseTime: 2000 # Max 2 second response time
+
+  # Metrics collection
+  metrics:
+    - name: 'Response time'
+      value: 'response.time'
+    - name: 'Error rate'
+      value: 'response.error_rate'
+
+# Test scenarios
+scenarios:
+  # Homepage load test
+  - name: 'Homepage Navigation'
+    weight: 40
+    flow:
+      - get:
+          url: '/'
+          expect:
+            - statusCode: 200
+            - contentType: 'text/html'
+          capture:
+            - header: 'x-response-time'
+              as: 'responseTime'
+
+      # Navigate to different sections
+      - get:
+          url: '/#features'
+          expect:
+            - statusCode: 200
+
+      - get:
+          url: '/#frameworks'
+          expect:
+            - statusCode: 200
+
+  # API endpoint testing (when implemented)
+  - name: 'API Endpoints'
+    weight: 30
+    flow:
+      # Health check
+      - get:
+          url: '/api/health'
+          expect:
+            - statusCode: 200
+            - contentType: 'application/json'
+
+      # Analysis endpoint (mock data)
+      - post:
+          url: '/api/analysis'
+          json:
+            content: 'Test marketing copy for analysis'
+            contentType: 'MARKETING_COPY'
+          expect:
+            - statusCode: [200, 429] # Accept rate limiting
+          think: 2 # Wait 2 seconds between requests
+
+  # Form submission testing
+  - name: 'Form Submissions'
+    weight: 20
+    flow:
+      - get:
+          url: '/'
+          expect:
+            - statusCode: 200
+
+      # Submit signup form
+      - post:
+          url: '/api/auth/signup'
+          json:
+            company: 'Test Company {{ $randomString() }}'
+            email: 'test{{ $randomInt() }}@example.com'
+            website: 'https://example.com'
+          expect:
+            - statusCode: [200, 400, 429]
+
+  # Static asset loading
+  - name: 'Static Assets'
+    weight: 10
+    flow:
+      # CSS files
+      - get:
+          url: '/_next/static/css/{{ $randomString() }}.css'
+          expect:
+            - statusCode: [200, 404]
+
+      # JS files
+      - get:
+          url: '/_next/static/chunks/{{ $randomString() }}.js'
+          expect:
+            - statusCode: [200, 404]
+
+# Custom functions for test data
+functions:
+  # Generate random test content
+  generateTestContent:
+    - 'Our company helps businesses grow through innovative solutions and strategic partnerships.'
+    - 'Transform your marketing with AI-powered insights and proven frameworks.'
+    - 'Drive revenue growth with data-driven optimization and actionable recommendations.'
+    - 'Eliminate guesswork in marketing with comprehensive analysis and expert guidance.'
+    - 'Accelerate business growth through systematic content optimization and strategic messaging.'
+
+# Plugins for advanced monitoring
+plugins:
+  # Memory usage monitoring
+  memory-usage:
+    interval: 5000
+
+  # Custom metrics
+  metrics-by-endpoint:
+    useOnlyRequestNames: true
+
+# Environment-specific configurations
+environments:
+  development:
+    target: 'http://localhost:3000'
+    phases:
+      - duration: 30
+        arrivalRate: 10
+
+  staging:
+    target: 'https://staging.zero-barriers-growth.com'
+    phases:
+      - duration: 120
+        arrivalRate: 25
+
+  production:
+    target: 'https://zero-barriers-growth.com'
+    phases:
+      - duration: 300
+        arrivalRate: 100

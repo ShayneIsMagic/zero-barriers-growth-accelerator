@@ -1,0 +1,84 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: zero-barriers-db
+    environment:
+      POSTGRES_DB: zero_barriers_growth
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: zero-barriers-redis
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Main Application (Development)
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: zero-barriers-app
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/zero_barriers_growth
+      DIRECT_URL: postgresql://postgres:postgres@postgres:5432/zero_barriers_growth
+      REDIS_URL: redis://redis:6379
+      NEXTAUTH_URL: http://localhost:3000
+      NEXTAUTH_SECRET: development-secret-change-in-production
+      NODE_ENV: development
+    ports:
+      - '3000:3000'
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules
+    command: npm run dev
+
+  # Prisma Studio (Development Tool)
+  prisma-studio:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: zero-barriers-prisma-studio
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/zero_barriers_growth
+    ports:
+      - '5555:5555'
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - .:/app
+    command: npx prisma studio --port 5555 --hostname 0.0.0.0
+    profiles:
+      - tools
+
+volumes:
+  postgres_data:
+  redis_data:
+  node_modules:
