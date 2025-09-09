@@ -92,3 +92,5 @@ echo "   npm run format       - Format code"
 echo "   npm run db:studio    - Open Prisma Studio"
 echo ""
 echo "📚 Documentation: See README.md for detailed information"
+
+

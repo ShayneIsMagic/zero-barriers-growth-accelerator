@@ -211,3 +211,5 @@ The application includes security headers:
 - [Prisma Production](https://www.prisma.io/docs/guides/deployment)
 - [Vercel Documentation](https://vercel.com/docs)
 - [Security Best Practices](https://owasp.org/www-project-top-ten/)
+
+

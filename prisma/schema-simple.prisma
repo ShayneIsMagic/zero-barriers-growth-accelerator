@@ -36,3 +36,5 @@ model Analysis {
   @@index([status])
   @@index([createdAt])
 }
+
+
