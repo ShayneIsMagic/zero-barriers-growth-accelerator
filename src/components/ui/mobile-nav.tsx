@@ -40,7 +40,7 @@ export function MobileNav() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="absolute top-full left-0 right-0 border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:hidden"
+            className="absolute left-0 right-0 top-full border-t bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:hidden"
           >
             <div className="container py-4">
               <nav className="flex flex-col space-y-4">
@@ -62,13 +62,19 @@ export function MobileNav() {
                         <span className="py-2 text-sm text-muted-foreground">
                           Welcome, {user.name}
                         </span>
-                        <Link href="/dashboard" onClick={() => setIsOpen(false)}>
-                          <Button variant="ghost" className="w-full justify-start">
+                        <Link
+                          href="/dashboard"
+                          onClick={() => setIsOpen(false)}
+                        >
+                          <Button
+                            variant="ghost"
+                            className="w-full justify-start"
+                          >
                             Dashboard
                           </Button>
                         </Link>
-                        <Button 
-                          variant="ghost" 
+                        <Button
+                          variant="ghost"
                           className="w-full justify-start"
                           onClick={handleSignOut}
                         >
@@ -77,12 +83,21 @@ export function MobileNav() {
                       </>
                     ) : (
                       <>
-                        <Link href="/auth/signin" onClick={() => setIsOpen(false)}>
-                          <Button variant="ghost" className="w-full justify-start">
+                        <Link
+                          href="/auth/signin"
+                          onClick={() => setIsOpen(false)}
+                        >
+                          <Button
+                            variant="ghost"
+                            className="w-full justify-start"
+                          >
                             Sign In
                           </Button>
                         </Link>
-                        <Link href="/auth/signup" onClick={() => setIsOpen(false)}>
+                        <Link
+                          href="/auth/signup"
+                          onClick={() => setIsOpen(false)}
+                        >
                           <Button className="w-full justify-start">
                             Get Started
                           </Button>

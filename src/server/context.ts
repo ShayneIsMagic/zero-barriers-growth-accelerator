@@ -11,7 +11,9 @@ export interface Context {
   user: any | null;
 }
 
-export async function createContext(opts: CreateContextOptions): Promise<Context> {
+export async function createContext(
+  opts: CreateContextOptions
+): Promise<Context> {
   // Get auth token from headers
   const authHeader = opts.headers.get('authorization');
   let user = null;

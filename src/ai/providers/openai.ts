@@ -101,7 +101,12 @@ export class OpenAIProvider implements AnalysisProvider {
         );
       }
 
-      if (error && typeof error === 'object' && 'name' in error && error.name === 'TimeoutError') {
+      if (
+        error &&
+        typeof error === 'object' &&
+        'name' in error &&
+        error.name === 'TimeoutError'
+      ) {
         throw new TimeoutError(this.name, options?.timeout || 45000);
       }
 

@@ -43,8 +43,12 @@ export const analysisRouter = createTRPCRouter({
             content: input.content,
             contentType: input.contentType,
             score: result.goldenCircle?.overallScore || 0,
-            insights: JSON.stringify(result.recommendations?.recommendations || []),
-            frameworks: JSON.stringify(result.goldenCircle ? ['golden-circle'] : []),
+            insights: JSON.stringify(
+              result.recommendations?.recommendations || []
+            ),
+            frameworks: JSON.stringify(
+              result.goldenCircle ? ['golden-circle'] : []
+            ),
             status: 'completed',
             userId: null, // Anonymous analysis
           },
@@ -84,8 +88,12 @@ export const analysisRouter = createTRPCRouter({
             content: input.content,
             contentType: input.contentType,
             score: result.goldenCircle?.overallScore || 0,
-            insights: JSON.stringify(result.recommendations?.recommendations || []),
-            frameworks: JSON.stringify(result.goldenCircle ? ['golden-circle'] : []),
+            insights: JSON.stringify(
+              result.recommendations?.recommendations || []
+            ),
+            frameworks: JSON.stringify(
+              result.goldenCircle ? ['golden-circle'] : []
+            ),
             status: 'completed',
             userId: ctx.user.id,
           },

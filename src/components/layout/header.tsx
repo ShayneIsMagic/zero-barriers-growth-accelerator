@@ -19,7 +19,7 @@ export function Header() {
       <div className="container flex h-16 max-w-screen-2xl items-center">
         <div className="mr-4 hidden md:flex">
           <Link href="/" className="mr-6 flex items-center space-x-2">
-            <Logo />
+            <Logo asLink={false} showText={false} />
             <span className="hidden font-bold sm:inline-block">
               Zero Barriers Growth Accelerator
             </span>

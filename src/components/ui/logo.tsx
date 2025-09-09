@@ -5,12 +5,14 @@ interface LogoProps {
   className?: string;
   showText?: boolean;
   size?: 'sm' | 'md' | 'lg';
+  asLink?: boolean;
 }
 
 export function Logo({
   className = '',
   showText = true,
   size = 'md',
+  asLink = true,
 }: LogoProps) {
   const sizeClasses = {
     sm: 'h-6 w-6',
@@ -24,8 +26,8 @@ export function Logo({
     lg: 'text-2xl',
   };
 
-  return (
-    <Link href="/" className={`flex items-center space-x-2 ${className}`}>
+  const logoContent = (
+    <div className={`flex items-center space-x-2 ${className}`}>
       <div className="relative">
         <div
           className={`${sizeClasses[size]} flex items-center justify-center rounded-lg bg-gradient-to-br from-growth-500 to-primary font-bold text-white shadow-lg`}
@@ -49,6 +51,8 @@ export function Logo({
           </span>
         </div>
       )}
-    </Link>
+    </div>
   );
+
+  return asLink ? <Link href="/">{logoContent}</Link> : logoContent;
 }

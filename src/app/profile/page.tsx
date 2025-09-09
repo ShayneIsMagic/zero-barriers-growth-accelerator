@@ -2,7 +2,13 @@
 
 import { useState } from 'react';
 import { useAuth } from '@/contexts/auth-context';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -27,9 +33,9 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-growth-600 mx-auto"></div>
+          <div className="mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-growth-600"></div>
           <p className="mt-4 text-growth-600">Loading...</p>
         </div>
       </div>
@@ -113,13 +119,17 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-growth-50 to-growth-100 p-4">
-      <div className="max-w-4xl mx-auto">
+      <div className="mx-auto max-w-4xl">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-growth-900">Profile Settings</h1>
-          <p className="text-growth-600">Manage your account information and security</p>
+          <h1 className="text-3xl font-bold text-growth-900">
+            Profile Settings
+          </h1>
+          <p className="text-growth-600">
+            Manage your account information and security
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
           {/* Profile Information */}
           <Card>
             <CardHeader>
@@ -131,32 +141,48 @@ export default function ProfilePage() {
             <CardContent>
               <form onSubmit={handleProfileUpdate} className="space-y-4">
                 {updateMessage && (
-                  <Alert variant={updateMessage.includes('Error') ? 'destructive' : 'default'}>
+                  <Alert
+                    variant={
+                      updateMessage.includes('Error')
+                        ? 'destructive'
+                        : 'default'
+                    }
+                  >
                     <AlertDescription>{updateMessage}</AlertDescription>
                   </Alert>
                 )}
 
                 <div className="space-y-2">
-                  <label htmlFor="name" className="text-sm font-medium text-growth-700">
+                  <label
+                    htmlFor="name"
+                    className="text-sm font-medium text-growth-700"
+                  >
                     Full Name
                   </label>
                   <Input
                     id="name"
                     value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
                     required
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor="email" className="text-sm font-medium text-growth-700">
+                  <label
+                    htmlFor="email"
+                    className="text-sm font-medium text-growth-700"
+                  >
                     Email Address
                   </label>
                   <Input
                     id="email"
                     type="email"
                     value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, email: e.target.value })
+                    }
                     required
                   />
                 </div>
@@ -186,52 +212,88 @@ export default function ProfilePage() {
             <CardContent>
               <form onSubmit={handlePasswordChange} className="space-y-4">
                 {passwordMessage && (
-                  <Alert variant={passwordMessage.includes('Error') ? 'destructive' : 'default'}>
+                  <Alert
+                    variant={
+                      passwordMessage.includes('Error')
+                        ? 'destructive'
+                        : 'default'
+                    }
+                  >
                     <AlertDescription>{passwordMessage}</AlertDescription>
                   </Alert>
                 )}
 
                 <div className="space-y-2">
-                  <label htmlFor="currentPassword" className="text-sm font-medium text-growth-700">
+                  <label
+                    htmlFor="currentPassword"
+                    className="text-sm font-medium text-growth-700"
+                  >
                     Current Password
                   </label>
                   <Input
                     id="currentPassword"
                     type="password"
                     value={passwordData.currentPassword}
-                    onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
+                    onChange={(e) =>
+                      setPasswordData({
+                        ...passwordData,
+                        currentPassword: e.target.value,
+                      })
+                    }
                     required
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor="newPassword" className="text-sm font-medium text-growth-700">
+                  <label
+                    htmlFor="newPassword"
+                    className="text-sm font-medium text-growth-700"
+                  >
                     New Password
                   </label>
                   <Input
                     id="newPassword"
                     type="password"
                     value={passwordData.newPassword}
-                    onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
+                    onChange={(e) =>
+                      setPasswordData({
+                        ...passwordData,
+                        newPassword: e.target.value,
+                      })
+                    }
                     required
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor="confirmPassword" className="text-sm font-medium text-growth-700">
+                  <label
+                    htmlFor="confirmPassword"
+                    className="text-sm font-medium text-growth-700"
+                  >
                     Confirm New Password
                   </label>
                   <Input
                     id="confirmPassword"
                     type="password"
                     value={passwordData.confirmPassword}
-                    onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
+                    onChange={(e) =>
+                      setPasswordData({
+                        ...passwordData,
+                        confirmPassword: e.target.value,
+                      })
+                    }
                     required
                   />
                 </div>
 
-                <Button type="submit" disabled={isChangingPassword} className="w-full">
-                  {isChangingPassword ? 'Changing Password...' : 'Change Password'}
+                <Button
+                  type="submit"
+                  disabled={isChangingPassword}
+                  className="w-full"
+                >
+                  {isChangingPassword
+                    ? 'Changing Password...'
+                    : 'Change Password'}
                 </Button>
               </form>
             </CardContent>

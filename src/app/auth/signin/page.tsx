@@ -3,7 +3,13 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/auth-context';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -37,7 +43,7 @@ export default function SignInPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-growth-50 to-growth-100 p-4">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-growth-50 to-growth-100 p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold text-growth-900">
@@ -54,9 +60,12 @@ export default function SignInPage() {
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
-            
+
             <div className="space-y-2">
-              <label htmlFor="email" className="text-sm font-medium text-growth-700">
+              <label
+                htmlFor="email"
+                className="text-sm font-medium text-growth-700"
+              >
                 Email
               </label>
               <Input
@@ -71,7 +80,10 @@ export default function SignInPage() {
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="password" className="text-sm font-medium text-growth-700">
+              <label
+                htmlFor="password"
+                className="text-sm font-medium text-growth-700"
+              >
                 Password
               </label>
               <Input
@@ -95,13 +107,19 @@ export default function SignInPage() {
 
             <div className="text-center text-sm text-growth-600">
               Don&apos;t have an account?{' '}
-              <Link href="/auth/signup" className="text-growth-700 hover:text-growth-800 font-medium">
+              <Link
+                href="/auth/signup"
+                className="font-medium text-growth-700 hover:text-growth-800"
+              >
                 Sign up
               </Link>
             </div>
 
             <div className="text-center text-sm text-growth-600">
-              <Link href="/auth/forgot-password" className="text-growth-700 hover:text-growth-800">
+              <Link
+                href="/auth/forgot-password"
+                className="text-growth-700 hover:text-growth-800"
+              >
                 Forgot your password?
               </Link>
             </div>

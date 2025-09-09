@@ -5,7 +5,13 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { ArrowLeft, Loader2, Mail, CheckCircle } from 'lucide-react';
 
@@ -24,7 +30,7 @@ export default function ForgotPasswordPage() {
       const response = await fetch('/api/auth/forgot-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email })
+        body: JSON.stringify({ email }),
       });
 
       if (response.ok) {
@@ -42,11 +48,11 @@ export default function ForgotPasswordPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-growth-50 to-growth-100 p-4">
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-growth-50 to-growth-100 p-4">
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
-            <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
-              <CheckCircle className="w-8 h-8 text-green-600" />
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
+              <CheckCircle className="h-8 w-8 text-green-600" />
             </div>
             <CardTitle className="text-2xl font-bold text-growth-900">
               Check Your Email
@@ -56,11 +62,12 @@ export default function ForgotPasswordPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="text-center">
-            <p className="text-sm text-growth-600 mb-6">
-              Didn&apos;t receive the email? Check your spam folder or try again.
+            <p className="mb-6 text-sm text-growth-600">
+              Didn&apos;t receive the email? Check your spam folder or try
+              again.
             </p>
             <div className="space-y-3">
-              <Button 
+              <Button
                 onClick={() => setSuccess(false)}
                 variant="outline"
                 className="w-full border-growth-200 text-growth-700 hover:bg-growth-50"
@@ -80,11 +87,11 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-growth-50 to-growth-100 p-4">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-growth-50 to-growth-100 p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold text-growth-900 flex items-center justify-center gap-2">
-            <Mail className="w-6 h-6" />
+          <CardTitle className="flex items-center justify-center gap-2 text-2xl font-bold text-growth-900">
+            <Mail className="h-6 w-6" />
             Forgot Password?
           </CardTitle>
           <CardDescription className="text-growth-600">
@@ -98,7 +105,7 @@ export default function ForgotPasswordPage() {
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
-            
+
             <div className="space-y-2">
               <Label htmlFor="email">Email Address</Label>
               <Input
@@ -111,9 +118,9 @@ export default function ForgotPasswordPage() {
                 disabled={isLoading}
               />
             </div>
-            
-            <Button 
-              type="submit" 
+
+            <Button
+              type="submit"
               className="w-full bg-growth-600 hover:bg-growth-700"
               disabled={isLoading}
             >
@@ -130,10 +137,13 @@ export default function ForgotPasswordPage() {
               )}
             </Button>
           </form>
-          
+
           <div className="mt-6 text-center text-sm text-growth-600">
             Remember your password?{' '}
-            <Link href="/auth/signin" className="text-growth-700 hover:text-growth-800 font-medium">
+            <Link
+              href="/auth/signin"
+              className="font-medium text-growth-700 hover:text-growth-800"
+            >
               Sign in here
             </Link>
           </div>

@@ -59,7 +59,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const signUp = async (email: string, password: string, name: string): Promise<boolean> => {
+  const signUp = async (
+    email: string,
+    password: string,
+    name: string
+  ): Promise<boolean> => {
     try {
       const response = await fetch('/api/auth/signup', {
         method: 'POST',

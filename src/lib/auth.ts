@@ -28,7 +28,10 @@ export class AuthService {
     return bcrypt.hash(password, 12);
   }
 
-  static async verifyPassword(password: string, hashedPassword: string): Promise<boolean> {
+  static async verifyPassword(
+    password: string,
+    hashedPassword: string
+  ): Promise<boolean> {
     return bcrypt.compare(password, hashedPassword);
   }
 
@@ -39,7 +42,7 @@ export class AuthService {
       name: user.name,
       role: user.role,
       iat: Math.floor(Date.now() / 1000),
-      exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24 * 7), // 7 days
+      exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 7, // 7 days
     };
 
     return new SignJWT(payload)
@@ -58,7 +61,10 @@ export class AuthService {
     }
   }
 
-  static async authenticateUser(email: string, password: string): Promise<User | null> {
+  static async authenticateUser(
+    email: string,
+    password: string
+  ): Promise<User | null> {
     const user = await prisma.user.findUnique({
       where: { email },
     });
@@ -80,9 +86,13 @@ export class AuthService {
     };
   }
 
-  static async createUser(email: string, password: string, name: string): Promise<User> {
+  static async createUser(
+    email: string,
+    password: string,
+    name: string
+  ): Promise<User> {
     const hashedPassword = await this.hashPassword(password);
-    
+
     const user = await prisma.user.create({
       data: {
         email,

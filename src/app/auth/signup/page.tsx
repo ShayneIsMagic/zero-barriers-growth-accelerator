@@ -6,7 +6,13 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { ArrowRight, Loader2, UserPlus } from 'lucide-react';
 
@@ -15,7 +21,7 @@ export default function SignUpPage() {
     name: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -39,8 +45,8 @@ export default function SignUpPage() {
         body: JSON.stringify({
           name: formData.name,
           email: formData.email,
-          password: formData.password
-        })
+          password: formData.password,
+        }),
       });
 
       if (response.ok) {
@@ -57,11 +63,11 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-growth-50 to-growth-100 p-4">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-growth-50 to-growth-100 p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold text-growth-900 flex items-center justify-center gap-2">
-            <UserPlus className="w-6 h-6" />
+          <CardTitle className="flex items-center justify-center gap-2 text-2xl font-bold text-growth-900">
+            <UserPlus className="h-6 w-6" />
             Create Account
           </CardTitle>
           <CardDescription className="text-growth-600">
@@ -75,7 +81,7 @@ export default function SignUpPage() {
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
-            
+
             <div className="space-y-2">
               <Label htmlFor="name">Full Name</Label>
               <Input
@@ -83,12 +89,14 @@ export default function SignUpPage() {
                 type="text"
                 placeholder="Shayne Roy"
                 value={formData.name}
-                onChange={(e) => setFormData({...formData, name: e.target.value})}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
                 required
                 disabled={isLoading}
               />
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -96,12 +104,14 @@ export default function SignUpPage() {
                 type="email"
                 placeholder="your@email.com"
                 value={formData.email}
-                onChange={(e) => setFormData({...formData, email: e.target.value})}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
                 required
                 disabled={isLoading}
               />
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
               <Input
@@ -109,12 +119,14 @@ export default function SignUpPage() {
                 type="password"
                 placeholder="Create a strong password"
                 value={formData.password}
-                onChange={(e) => setFormData({...formData, password: e.target.value})}
+                onChange={(e) =>
+                  setFormData({ ...formData, password: e.target.value })
+                }
                 required
                 disabled={isLoading}
               />
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="confirmPassword">Confirm Password</Label>
               <Input
@@ -122,14 +134,16 @@ export default function SignUpPage() {
                 type="password"
                 placeholder="Confirm your password"
                 value={formData.confirmPassword}
-                onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
+                onChange={(e) =>
+                  setFormData({ ...formData, confirmPassword: e.target.value })
+                }
                 required
                 disabled={isLoading}
               />
             </div>
-            
-            <Button 
-              type="submit" 
+
+            <Button
+              type="submit"
               className="w-full bg-growth-600 hover:bg-growth-700"
               disabled={isLoading}
             >
@@ -146,10 +160,13 @@ export default function SignUpPage() {
               )}
             </Button>
           </form>
-          
+
           <div className="mt-6 text-center text-sm text-growth-600">
             Already have an account?{' '}
-            <Link href="/auth/signin" className="text-growth-700 hover:text-growth-800 font-medium">
+            <Link
+              href="/auth/signin"
+              className="font-medium text-growth-700 hover:text-growth-800"
+            >
               Sign in here
             </Link>
           </div>
