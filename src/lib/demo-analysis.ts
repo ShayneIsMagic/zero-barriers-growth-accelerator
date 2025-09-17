@@ -102,6 +102,9 @@ export class DemoAnalysisService {
         what: isTechCompany
           ? "Products and services are clearly defined and aligned with the company's mission."
           : "The offerings are clear but could better connect to the underlying purpose and values.",
+        who: isConsulting
+          ? "Our team of expert consultants and satisfied clients."
+          : "Our target audience and the people we serve.",
         overallScore: goldenCircleScore,
         insights: [
           isTechCompany ? "Excellent articulation of company mission and values" : "Consider strengthening the 'Why' messaging to create deeper emotional connections",
@@ -364,6 +367,7 @@ export class DemoAnalysisService {
         why: 'To empower people through innovative technology that simplifies complex problems and enhances human potential.',
         how: 'Through cutting-edge research, user-centered design, and seamless integration of hardware and software solutions.',
         what: 'Consumer electronics, software platforms, and digital services that transform how people work, communicate, and create.',
+        who: 'Our customers, partners, and the global community of innovators and creators.',
         overallScore: 88,
         insights: [
           "Strong 'why' messaging that resonates with innovation and empowerment",
@@ -500,6 +504,7 @@ export class DemoAnalysisService {
         why: 'To democratize commerce and make selling accessible to everyone, everywhere.',
         how: 'Through intuitive platforms, comprehensive tools, and supportive communities that remove barriers to entrepreneurship.',
         what: 'E-commerce platforms, payment processing, and business tools that enable anyone to start and grow an online business.',
+        who: 'Entrepreneurs, small business owners, and aspiring sellers worldwide.',
         overallScore: 85,
         insights: [
           'Clear democratization message that appeals to entrepreneurs',
@@ -635,6 +640,7 @@ export class DemoAnalysisService {
         why: 'To empower businesses to grow faster and more efficiently through intelligent automation and data-driven insights.',
         how: 'Through seamless integrations, powerful analytics, and intuitive workflows that eliminate manual processes.',
         what: 'Business software, automation tools, and analytics platforms that streamline operations and drive growth.',
+        who: 'Business leaders, operations teams, and growth-focused organizations.',
         overallScore: 87,
         insights: [
           'Clear business growth focus with measurable outcomes',
@@ -770,6 +776,7 @@ export class DemoAnalysisService {
         why: 'To provide value and solve problems for our customers through innovative solutions and exceptional service.',
         how: 'Through dedicated team members, proven processes, and customer-focused approach that prioritizes quality and reliability.',
         what: 'Products and services that meet customer needs and deliver measurable results for business growth and success.',
+        who: 'Our valued customers and the communities we serve.',
         overallScore: 72,
         insights: [
           'Generic messaging lacks specific differentiation',

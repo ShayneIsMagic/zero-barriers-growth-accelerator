@@ -166,15 +166,15 @@ export function AnalysisVisualization({ analysis }: AnalysisVisualizationProps) 
                 <h4 className="font-semibold mb-4 text-lg">Functional Elements (Top 10)</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                   {Object.entries(analysis.elementsOfValue.functional)
-                    .sort(([, a], [, b]) => b - a)
+                    .sort(([, a], [, b]) => Number(b) - Number(a))
                     .slice(0, 10)
                     .map(([key, value]) => (
                     <div key={key} className="p-3 border rounded-lg bg-slate-50 dark:bg-slate-800">
                       <div className="flex justify-between items-center mb-2">
                         <span className="text-sm font-medium capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
-                        <span className={`text-sm font-bold ${getScoreColor(value)}`}>{value}/10</span>
+                        <span className={`text-sm font-bold ${getScoreColor(Number(value))}`}>{value}/10</span>
                       </div>
-                      <Progress value={value * 10} className="h-2" />
+                      <Progress value={Number(value) * 10} className="h-2" />
                     </div>
                   ))}
                 </div>
@@ -185,15 +185,15 @@ export function AnalysisVisualization({ analysis }: AnalysisVisualizationProps) 
                 <h4 className="font-semibold mb-4 text-lg">Emotional Elements (Top 10)</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                   {Object.entries(analysis.elementsOfValue.emotional)
-                    .sort(([, a], [, b]) => b - a)
+                    .sort(([, a], [, b]) => Number(b) - Number(a))
                     .slice(0, 10)
                     .map(([key, value]) => (
                     <div key={key} className="p-3 border rounded-lg bg-slate-50 dark:bg-slate-800">
                       <div className="flex justify-between items-center mb-2">
                         <span className="text-sm font-medium capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
-                        <span className={`text-sm font-bold ${getScoreColor(value)}`}>{value}/10</span>
+                        <span className={`text-sm font-bold ${getScoreColor(Number(value))}`}>{value}/10</span>
                       </div>
-                      <Progress value={value * 10} className="h-2" />
+                      <Progress value={Number(value) * 10} className="h-2" />
                     </div>
                   ))}
                 </div>
@@ -204,15 +204,15 @@ export function AnalysisVisualization({ analysis }: AnalysisVisualizationProps) 
                 <h4 className="font-semibold mb-4 text-lg">Life-Changing Elements (Top 10)</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                   {Object.entries(analysis.elementsOfValue.lifeChanging)
-                    .sort(([, a], [, b]) => b - a)
+                    .sort(([, a], [, b]) => Number(b) - Number(a))
                     .slice(0, 10)
                     .map(([key, value]) => (
                     <div key={key} className="p-3 border rounded-lg bg-slate-50 dark:bg-slate-800">
                       <div className="flex justify-between items-center mb-2">
                         <span className="text-sm font-medium capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
-                        <span className={`text-sm font-bold ${getScoreColor(value)}`}>{value}/10</span>
+                        <span className={`text-sm font-bold ${getScoreColor(Number(value))}`}>{value}/10</span>
                       </div>
-                      <Progress value={value * 10} className="h-2" />
+                      <Progress value={Number(value) * 10} className="h-2" />
                     </div>
                   ))}
                 </div>
@@ -223,15 +223,15 @@ export function AnalysisVisualization({ analysis }: AnalysisVisualizationProps) 
                 <h4 className="font-semibold mb-4 text-lg">Social Impact Elements (Top 10)</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                   {Object.entries(analysis.elementsOfValue.socialImpact)
-                    .sort(([, a], [, b]) => b - a)
+                    .sort(([, a], [, b]) => Number(b) - Number(a))
                     .slice(0, 10)
                     .map(([key, value]) => (
                     <div key={key} className="p-3 border rounded-lg bg-slate-50 dark:bg-slate-800">
                       <div className="flex justify-between items-center mb-2">
                         <span className="text-sm font-medium capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
-                        <span className={`text-sm font-bold ${getScoreColor(value)}`}>{value}/10</span>
+                        <span className={`text-sm font-bold ${getScoreColor(Number(value))}`}>{value}/10</span>
                       </div>
-                      <Progress value={value * 10} className="h-2" />
+                      <Progress value={Number(value) * 10} className="h-2" />
                     </div>
                   ))}
                 </div>
@@ -267,14 +267,14 @@ export function AnalysisVisualization({ analysis }: AnalysisVisualizationProps) 
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
                 {Object.entries(analysis.cliftonStrengths.themes)
-                  .sort(([, a], [, b]) => b - a)
+                  .sort(([, a], [, b]) => Number(b) - Number(a))
                   .map(([theme, score]) => (
                   <div key={theme} className="p-3 border rounded-lg bg-slate-50 dark:bg-slate-800">
                     <div className="flex justify-between items-center mb-2">
                       <span className="font-medium text-sm">{theme}</span>
-                      <span className={`text-sm font-bold ${getScoreColor(score)}`}>{score}/10</span>
+                      <span className={`text-sm font-bold ${getScoreColor(Number(score))}`}>{score}/10</span>
                     </div>
-                    <Progress value={score * 10} className="h-2" />
+                    <Progress value={Number(score) * 10} className="h-2" />
                   </div>
                 ))}
               </div>

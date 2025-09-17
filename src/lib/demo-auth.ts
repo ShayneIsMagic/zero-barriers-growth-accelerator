@@ -57,7 +57,7 @@ export class DemoAuthService {
 
   static async getCurrentUser(): Promise<DemoUser | null> {
     // Return the admin user by default in demo mode
-    return this.DEMO_USERS.find(u => u.email === 'shayne@devpipeline.com') || this.DEMO_USERS[0];
+    return this.DEMO_USERS.find(u => u.email === 'shayne@devpipeline.com') || this.DEMO_USERS[0] || null;
   }
 
   static async signOut(): Promise<void> {

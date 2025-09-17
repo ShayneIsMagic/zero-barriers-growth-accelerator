@@ -7,17 +7,8 @@ const path = require('path');
 console.log('🚀 Building for Cloudflare Pages...');
 
 try {
-  // Copy Cloudflare config to next.config.js
-  const cloudflareConfig = fs.readFileSync('next.config.cloudflare.js', 'utf8');
-  const nextConfigPath = 'next.config.js';
-  
-  // Backup original config if it exists
-  if (fs.existsSync(nextConfigPath)) {
-    fs.copyFileSync(nextConfigPath, 'next.config.js.backup');
-  }
-  
-  // Write Cloudflare config
-  fs.writeFileSync(nextConfigPath, cloudflareConfig);
+  // Use the existing next.config.js (no need to swap configs)
+  console.log('✅ Using existing Next.js configuration');
   
   console.log('✅ Cloudflare configuration applied');
   

@@ -1,31 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // GitHub Pages configuration - only for production builds
-  ...(process.env.BUILD_STATIC === 'true' && {
-    output: 'export',
-    trailingSlash: true,
-    skipTrailingSlashRedirect: true,
-    distDir: 'out',
-    assetPrefix: '/zero-barriers-growth-accelerator',
-    basePath: '/zero-barriers-growth-accelerator',
-  }),
-  
-  experimental: {
-    serverComponentsExternalPackages: ['@prisma/client', 'bcryptjs'],
-    serverActions: {
-      allowedOrigins: ['localhost:3000', 'vercel.app'],
-    },
-  },
+  // Standard Next.js configuration for development
   images: {
-    domains: [
-      'localhost',
-      'vercel.app',
-      'avatars.githubusercontent.com',
-      'lh3.googleusercontent.com',
-    ],
+    domains: ['images.unsplash.com', 'via.placeholder.com'],
     formats: ['image/webp', 'image/avif'],
   },
-  // Environment variables are handled by .env files
+  // Environment variables
+  env: {
+    CLOUDFLARE_PAGES: 'false',
+  },
+  // Headers for security
   async headers() {
     return [
       {
@@ -43,23 +27,13 @@ const nextConfig = {
             key: 'Referrer-Policy',
             value: 'origin-when-cross-origin',
           },
-          {
-            key: 'Content-Security-Policy',
-            value:
-              "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https:; frame-ancestors 'none';",
-          },
         ],
       },
     ];
   },
-  async redirects() {
-    return [
-      {
-        source: '/home',
-        destination: '/',
-        permanent: true,
-      },
-    ];
+  // Experimental features
+  experimental: {
+    esmExternals: false,
   },
 };
 

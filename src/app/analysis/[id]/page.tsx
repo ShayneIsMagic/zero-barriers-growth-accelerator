@@ -1,6 +1,7 @@
 'use client';
 
 import { useParams } from 'next/navigation';
+
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -306,7 +307,7 @@ export default function AnalysisDetailPage() {
                   <h4 className="font-semibold mb-3">Top Themes</h4>
                   <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                     {Object.entries(analysis.cliftonStrengths.themes)
-                      .sort(([_, a], [__, b]) => b - a)
+                      .sort(([_, a], [__, b]) => Number(b) - Number(a))
                       .slice(0, 10)
                       .map(([theme, score]) => (
                         <div key={theme} className="text-center p-3 border rounded-lg">

@@ -1,10 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Cloudflare Pages configuration
-  output: 'export',
-  trailingSlash: true,
+  output: 'standalone',
   images: {
-    unoptimized: true,
     domains: ['images.unsplash.com', 'via.placeholder.com'],
     formats: ['image/webp', 'image/avif'],
   },
@@ -34,7 +32,7 @@ const nextConfig = {
       },
     ];
   },
-  // Disable server-side features for static export
+  // Optimize for Cloudflare
   experimental: {
     esmExternals: false,
   },
