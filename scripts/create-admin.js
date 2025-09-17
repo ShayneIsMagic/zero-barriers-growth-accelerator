@@ -36,3 +36,5 @@ async function createSuperAdmin() {
 }
 
 createSuperAdmin();
+
+

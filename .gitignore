@@ -199,3 +199,5 @@ prisma/migrations/dev.db*
 # Artillery load testing results
 artillery-report-*.json
 artillery-report-*.html
+
+

@@ -50,3 +50,5 @@ fi
 echo "🎉 Production build completed successfully!"
 echo "📁 Build artifacts are ready in .next/ directory"
 echo "🚀 Ready for deployment!"
+
+

@@ -1,332 +1,371 @@
-# Zero Barriers Growth Accelerator
+# 🚀 Zero Barriers Growth Accelerator
 
-[![Next.js](https://img.shields.io/badge/Next.js-14.0.4-black)](https://nextjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.3.3-blue)](https://www.typescriptlang.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4.0-38B2AC)](https://tailwindcss.com/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+> **AI-Powered Marketing Optimization Platform**  
+> Eliminate guesswork in marketing with data-driven insights and proven frameworks
 
-> AI-powered marketing optimization platform that systematically analyzes content to identify growth barriers and provide actionable recommendations.
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/ShayneIsMagic/zero-barriers-growth-accelerator)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)](https://www.typescriptlang.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-14.0-black)](https://nextjs.org/)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-## 🚀 Project Overview
+## 📊 Current Status
 
-The Zero Barriers Growth Accelerator is a comprehensive web application that combines established marketing frameworks with AI-powered analysis to eliminate guesswork in marketing optimization and drive measurable revenue growth.
+**✅ COMPLETED & PRODUCTION-READY:**
+- **Authentication System**: Custom JWT-based auth with user management
+- **Frontend UI**: Complete landing page, auth pages, dashboard, and profile
+- **Backend API**: tRPC server with proper context and authentication
+- **Database**: Prisma schema with user management
+- **Build System**: Next.js 14 with TypeScript and proper tooling
+- **Deployment**: Production environment configurations ready
 
-### Core Objectives
+**🚧 IN PROGRESS:**
+- AI Analysis Engine integration
+- Content analysis workflows
 
-- **Rapid Growth Identification**: Analyze content in under 60 seconds to identify revenue-blocking gaps
-- **Substantial Impact Delivery**: Provide recommendations that drive 25-50% improvements in conversion rates
-- **Sustainable Growth Engineering**: Create systematic, repeatable optimization processes
-- **Barrier Elimination**: Remove friction between insight and implementation
-- **Revenue Acceleration**: Enable clients to achieve measurable revenue growth within 90 days
+**❌ NOT STARTED:**
+- AI content analysis and recommendations
+- User analytics and reporting
+- Advanced admin features
+- Payment integration
 
-### Analytical Frameworks
+## 🎯 Core Value Proposition
 
-1. **Simon Sinek's Golden Circle Analysis** - WHY, HOW, WHAT framework
-2. **Consumer Elements of Value** - 30 value elements across functional, emotional, life-changing, and social impact categories
-3. **B2B Elements of Value** - 40 elements specific to business-to-business value creation
-4. **CliftonStrengths Domains** - 34 themes across executing, influencing, relationship building, and strategic thinking domains
+The Zero Barriers Growth Accelerator analyzes your marketing copy, website content, and digital presence to identify growth barriers and provide actionable optimization recommendations using proven frameworks:
 
-## 🛠️ Technology Stack
+- **Simon Sinek's Golden Circle** (Why → How → What)
+- **Consumer Elements of Value** (Functional, Emotional, Life-Changing, Social Impact)
+- **B2B Elements of Value** (Productivity, Risk Reduction, Cost Reduction, etc.)
+- **CliftonStrengths Domains** (Strategic, Executing, Influencing, Relationship Building)
+
+## 🏗️ Architecture Overview
 
 ### Frontend
-
-- **Next.js 14** with App Router for server-side rendering and optimal performance
+- **Next.js 14** with App Router, SSR, and optimization
 - **TypeScript** for type safety and developer experience
-- **Tailwind CSS** with custom design system for rapid UI development
-- **Radix UI** components for accessible, unstyled UI primitives
-- **Framer Motion** for smooth animations and micro-interactions
+- **Tailwind CSS** with custom design system and dark mode
+- **Shadcn/ui** for accessible, customizable components
+- **Framer Motion** for smooth animations and transitions
 - **React Hook Form + Zod** for type-safe form validation
 
 ### Backend
-
 - **tRPC** for end-to-end type safety from frontend to database
 - **PostgreSQL** with Prisma ORM for robust data management
-- **NextAuth.js v5** for authentication and authorization
+- **Custom JWT Authentication** for secure, scalable user management
 - **Redis** for caching and session management
 
-### AI/ML
+### AI/ML Stack
+- **OpenAI GPT-4 Turbo** for content analysis and JSON mode
+- **Pinecone/Supabase pgvector** for vector database and semantic search
+- **Natural Language Processing** for sentiment analysis, NER, and classification
+- **Claude** for data gathering and organization
 
-- **OpenAI GPT-4 Turbo** for advanced content analysis
-- **Pinecone** for vector database and semantic search
-- **Custom NLP pipeline** for framework-specific analysis
-
-### Development Tools
-
+### Development & Deployment
 - **ESLint + Prettier** for code quality and formatting
-- **Vitest + React Testing Library** for comprehensive testing
+- **Vitest + React Testing Library** for unit and integration testing
 - **Playwright** for end-to-end testing
-- **Turborepo** for monorepo management
+- **Docker + Docker Compose** for containerization
+- **Vercel** for deployment and analytics
+- **GitHub Actions** for CI/CD
 
-## 📁 Project Structure
+## 🔐 Authentication System
 
-```
-zero-barriers-growth-accelerator/
-├── src/
-│   ├── app/                    # Next.js App Router pages
-│   │   ├── layout.tsx         # Root layout component
-│   │   ├── page.tsx           # Homepage
-│   │   ├── globals.css        # Global styles
-│   │   ├── (auth)/            # Authentication routes
-│   │   ├── dashboard/         # Dashboard routes
-│   │   ├── analysis/          # Analysis routes
-│   │   └── api/               # API routes
-│   ├── components/            # Reusable UI components
-│   │   ├── ui/               # Base UI components
-│   │   ├── layout/           # Layout components
-│   │   ├── sections/         # Page sections
-│   │   └── forms/            # Form components
-│   ├── lib/                  # Utility libraries
-│   ├── types/                # TypeScript type definitions
-│   ├── hooks/                # Custom React hooks
-│   ├── utils/                # Helper functions
-│   ├── server/               # Server-side utilities
-│   ├── trpc/                 # tRPC configuration
-│   ├── auth/                 # Authentication configuration
-│   └── ai/                   # AI analysis services
-├── prisma/                   # Database schema and migrations
-├── public/                   # Static assets
-├── tests/                    # Test files
-├── docs/                     # Documentation
-└── scripts/                  # Build and deployment scripts
+All protected endpoints require valid authentication via JWT tokens. Include the token in the Authorization header:
+
+```bash
+Authorization: Bearer <jwt-token>
 ```
 
-## 🚀 Getting Started
+**Available Auth Endpoints:**
+- `POST /api/auth/signup` - User registration
+- `POST /api/auth/signin` - User login  
+- `POST /api/auth/signout` - User logout
+- `GET /api/auth/me` - Get current user info
+
+**User Roles:**
+- `SUPER_ADMIN` - Full system access and user management
+- `ADMIN` - Administrative functions and user oversight
+- `C_SUITE` - Executive-level analytics and reporting
+- `PRODUCER` - Content creation and analysis
+- `USER` - Basic analysis and personal dashboard
+
+## 🚀 Quick Start
 
 ### Prerequisites
-
-- Node.js 18.17.0 or higher
-- PostgreSQL 14 or higher
-- Redis 6 or higher
-- npm or yarn package manager
+- Node.js 18+ 
+- PostgreSQL 14+ (or SQLite for development)
+- Redis 6+ (optional for development)
 
 ### Installation
 
 1. **Clone the repository**
-
-   ```bash
-   git clone https://github.com/ShayneIsMagic/zero-barriers-growth-accelerator.git
-   cd zero-barriers-growth-accelerator
-   ```
-
-2. **Install dependencies**
-
-   ```bash
-   npm install
-   # or
-   yarn install
-   ```
-
-3. **Set up environment variables**
-
-   ```bash
-   cp env.example .env.local
-   ```
-
-   Edit `.env.local` with your configuration:
-
-   ```env
-   # Database
-   DATABASE_URL="postgresql://username:password@localhost:5432/zero_barriers_growth"
-   DIRECT_URL="postgresql://username:password@localhost:5432/zero_barriers_growth"
-
-   # Authentication
-   NEXTAUTH_URL="http://localhost:3000"
-   NEXTAUTH_SECRET="your-secret-key-here"
-
-   # AI Services
-   OPENAI_API_KEY="your-openai-api-key"
-   PINECONE_API_KEY="your-pinecone-api-key"
-   PINECONE_ENVIRONMENT="your-pinecone-environment"
-
-   # Redis
-   REDIS_URL="redis://localhost:6379"
-   ```
-
-4. **Set up the database**
-
-   ```bash
-   # Generate Prisma client
-   npm run db:generate
-
-   # Push schema to database
-   npm run db:push
-
-   # Seed database with initial data
-   npm run db:seed
-   ```
-
-5. **Start the development server**
-
-   ```bash
-   npm run dev
-   # or
-   yarn dev
-   ```
-
-6. **Open your browser**
-   Navigate to [http://localhost:3000](http://localhost:3000)
-
-### Database Setup
-
-1. **Create PostgreSQL database**
-
-   ```sql
-   CREATE DATABASE zero_barriers_growth;
-   ```
-
-2. **Run Prisma migrations**
-
-   ```bash
-   npm run db:migrate
-   ```
-
-3. **Generate Prisma client**
-   ```bash
-   npm run db:generate
-   ```
-
-### Redis Setup
-
-1. **Install Redis** (macOS)
-
-   ```bash
-   brew install redis
-   brew services start redis
-   ```
-
-2. **Install Redis** (Ubuntu/Debian)
-   ```bash
-   sudo apt update
-   sudo apt install redis-server
-   sudo systemctl start redis-server
-   ```
-
-## 🧪 Testing
-
-### Run Tests
-
 ```bash
-# Unit tests
-npm run test
-
-# Test with UI
-npm run test:ui
-
-# Test coverage
-npm run test:coverage
-
-# End-to-end tests
-npm run e2e
+git clone https://github.com/ShayneIsMagic/zero-barriers-growth-accelerator.git
+cd zero-barriers-growth-accelerator
 ```
 
-### Test Structure
+2. **Install dependencies**
+```bash
+npm install
+```
 
-- **Unit Tests**: Component and utility function testing
-- **Integration Tests**: API endpoint and database interaction testing
-- **E2E Tests**: User flow and critical path testing
-- **Visual Regression**: Component visual consistency testing
+3. **Set up environment variables**
+```bash
+cp .env.example .env.local
+# Edit .env.local with your configuration
+```
+
+4. **Set up the database**
+```bash
+npm run db:generate
+npm run db:push
+npm run db:seed
+```
+
+5. **Create super admin user**
+```bash
+npm run setup:super-admin
+```
+
+6. **Start development server**
+```bash
+npm run dev
+```
+
+### Environment Variables
+
+```bash
+# Database
+DATABASE_URL="postgresql://user:password@localhost:5432/zerobarriers"
+
+# Authentication
+JWT_SECRET="your-super-secret-jwt-key-change-in-production"
+
+# AI Services
+OPENAI_API_KEY="your-openai-api-key"
+CLAUDE_API_KEY="your-claude-api-key"
+PINECONE_API_KEY="your-pinecone-api-key"
+
+# Redis (optional)
+REDIS_URL="redis://localhost:6379"
+
+# External Services
+STRIPE_SECRET_KEY="your-stripe-secret-key"
+SENDGRID_API_KEY="your-sendgrid-api-key"
+```
+
+## 📋 Prioritized Development Roadmap
+
+### 🚨 **PHASE 1: CRITICAL CORE FUNCTIONALITY (Weeks 1-2)**
+
+#### **Week 1: AI Analysis Engine Foundation**
+- [ ] **AI Service Integration** (Priority: CRITICAL)
+  - [ ] Connect OpenAI GPT-4 Turbo API
+  - [ ] Implement content analysis pipeline
+  - [ ] Create analysis result schemas
+  - [ ] Build error handling and fallbacks
+
+- [ ] **Content Analysis API** (Priority: CRITICAL)
+  - [ ] `POST /api/content/analyze` endpoint
+  - [ ] Content input validation and processing
+  - [ ] AI analysis orchestration
+  - [ ] Result storage and retrieval
+
+- [ ] **Basic Analysis Dashboard** (Priority: HIGH)
+  - [ ] Analysis input forms (URL, text, file upload)
+  - [ ] Real-time analysis progress
+  - [ ] Basic result display
+  - [ ] Analysis history
+
+#### **Week 2: User Experience & Data Flow**
+- [ ] **Analysis Workflow** (Priority: HIGH)
+  - [ ] Step-by-step analysis wizard
+  - [ ] Progress indicators and status updates
+  - [ ] Error handling and user feedback
+  - [ ] Analysis result export (PDF/CSV)
+
+- [ ] **User Analytics** (Priority: MEDIUM)
+  - [ ] Analysis usage tracking
+  - [ ] User dashboard statistics
+  - [ ] Progress tracking and insights
+
+### 🚀 **PHASE 2: ENHANCED FEATURES (Weeks 3-4)**
+
+#### **Week 3: Advanced Analysis & Insights**
+- [ ] **Framework-Specific Analysis** (Priority: HIGH)
+  - [ ] Golden Circle analysis implementation
+  - [ ] Elements of Value scoring
+  - [ ] CliftonStrengths integration
+  - [ ] Comparative analysis tools
+
+- [ ] **Recommendation Engine** (Priority: HIGH)
+  - [ ] Actionable improvement suggestions
+  - [ ] Priority-based recommendations
+  - [ ] Implementation guidance
+  - [ ] Success metrics tracking
+
+#### **Week 4: Content Management & Optimization**
+- [ ] **Content Library** (Priority: MEDIUM)
+  - [ ] Content organization and tagging
+  - [ ] Version control and history
+  - [ ] Template library
+  - [ ] Best practices repository
+
+- [ ] **Advanced Reporting** (Priority: MEDIUM)
+  - [ ] Custom report builder
+  - [ ] Trend analysis and insights
+  - [ ] ROI tracking and measurement
+  - [ ] Executive summaries
+
+### 🎯 **PHASE 3: SCALE & ENTERPRISE (Weeks 5-6)**
+
+#### **Week 5: Team & Collaboration**
+- [ ] **Team Management** (Priority: MEDIUM)
+  - [ ] User invitation and role management
+  - [ ] Team workspaces and projects
+  - [ ] Collaboration tools and sharing
+  - [ ] Permission-based access control
+
+- [ ] **Workflow Automation** (Priority: LOW)
+  - [ ] Scheduled analysis and reports
+  - [ ] Automated recommendations
+  - [ ] Integration webhooks
+  - [ ] Custom automation rules
+
+#### **Week 6: Enterprise Features**
+- [ ] **Advanced Admin Panel** (Priority: LOW)
+  - [ ] System monitoring and health checks
+  - [ ] User activity and analytics
+  - [ ] System configuration and settings
+  - [ ] Backup and recovery tools
+
+- [ ] **API & Integrations** (Priority: LOW)
+  - [ ] Public API documentation
+  - [ ] Third-party integrations (HubSpot, Salesforce, etc.)
+  - [ ] Webhook support
+  - [ ] Custom integration builder
+
+### 🔮 **PHASE 4: FUTURE ENHANCEMENTS (Weeks 7+)**
+
+- [ ] **AI Model Training** (Priority: LOW)
+  - [ ] Custom model fine-tuning
+  - [ ] Industry-specific analysis
+  - [ ] Continuous learning and improvement
+
+- [ ] **Mobile Application** (Priority: LOW)
+  - [ ] React Native mobile app
+  - [ ] Offline analysis capabilities
+  - [ ] Push notifications
+
+- [ ] **Advanced Analytics** (Priority: LOW)
+  - [ ] Predictive analytics
+  - [ ] Machine learning insights
+  - [ ] Competitive analysis tools
+
+## 🧪 Testing Strategy
+
+### Testing Levels
+- **Unit Tests**: Component and function testing with Vitest
+- **Integration Tests**: API endpoint and database testing
+- **E2E Tests**: Full user workflow testing with Playwright
+- **Performance Tests**: Load testing with Artillery
+- **Security Tests**: Vulnerability scanning and penetration testing
+
+### Quality Gates
+- [ ] All tests passing
+- [ ] Code coverage > 80%
+- [ ] No critical security vulnerabilities
+- [ ] Performance benchmarks met
+- [ ] Accessibility compliance (WCAG 2.1 AA)
 
 ## 🚀 Deployment
 
-### Vercel (Recommended)
+### Production Environment
+- **Platform**: Vercel (recommended) or AWS/GCP
+- **Database**: PostgreSQL with connection pooling
+- **Caching**: Redis for session and data caching
+- **CDN**: Vercel Edge Network or CloudFlare
+- **Monitoring**: Vercel Analytics + custom monitoring
 
-1. **Connect your GitHub repository to Vercel**
-2. **Set environment variables** in Vercel dashboard
-3. **Deploy automatically** on push to main branch
+### Environment-Specific Configs
+- **Development**: SQLite + local Redis (optional)
+- **Staging**: PostgreSQL + Redis + test AI keys
+- **Production**: PostgreSQL + Redis + production AI keys
 
-### Docker
+## 🔧 Development Commands
 
 ```bash
-# Build image
-docker build -t zero-barriers-growth .
+# Development
+npm run dev              # Start development server
+npm run build            # Build for production
+npm run start            # Start production server
 
-# Run container
-docker run -p 3000:3000 zero-barriers-growth
+# Database
+npm run db:generate      # Generate Prisma client
+npm run db:push          # Push schema to database
+npm run db:seed          # Seed database with initial data
+npm run db:studio        # Open Prisma Studio
+
+# Testing
+npm run test             # Run unit tests
+npm run test:e2e         # Run E2E tests
+npm run test:coverage    # Generate coverage report
+
+# Code Quality
+npm run lint             # Run ESLint
+npm run lint:fix         # Fix ESLint issues
+npm run format           # Format code with Prettier
+npm run type-check       # TypeScript type checking
+
+# Utilities
+npm run setup:super-admin # Create super admin user
+npm run clean            # Clean build artifacts
 ```
 
-### Environment Variables for Production
-
-```env
-NODE_ENV=production
-DATABASE_URL="your-production-database-url"
-REDIS_URL="your-production-redis-url"
-NEXTAUTH_SECRET="your-production-secret"
-OPENAI_API_KEY="your-production-openai-key"
-PINECONE_API_KEY="your-production-pinecone-key"
-```
-
-## 📚 API Documentation
-
-### Core Endpoints
-
-- `POST /api/analysis` - Create new content analysis
-- `GET /api/analysis/:id` - Retrieve analysis results
-- `GET /api/analysis` - List analyses with filtering
-- `POST /api/recommendations` - Generate optimization recommendations
-- `GET /api/dashboard/stats` - Dashboard statistics
-
-### Authentication
-
-All protected endpoints require valid authentication via NextAuth.js. Include the session token in the Authorization header:
+## 📁 Project Structure
 
 ```
-Authorization: Bearer <session-token>
+src/
+├── app/                    # Next.js App Router pages
+│   ├── api/               # API routes
+│   ├── auth/              # Authentication pages
+│   ├── dashboard/         # User dashboard
+│   └── profile/           # User profile
+├── components/            # Reusable UI components
+│   ├── ui/                # Base UI components (shadcn/ui)
+│   └── layout/            # Layout components
+├── contexts/              # React contexts
+├── lib/                   # Utility functions and services
+├── server/                # tRPC server and routers
+└── types/                 # TypeScript type definitions
 ```
 
-## 🔧 Development Guidelines
+## 🐛 Common Issues & Solutions
 
-### Code Style
+### Development Issues
+- **Database connection errors**: Check DATABASE_URL and ensure PostgreSQL is running
+- **Redis connection errors**: Verify Redis is running and REDIS_URL is correct
+- **Authentication issues**: Check JWT_SECRET and ensure auth tokens are valid
+- **AI analysis failures**: Verify OpenAI API key and Pinecone configuration
 
-- Use TypeScript strict mode
-- Follow ESLint and Prettier configurations
-- Write meaningful commit messages
-- Use conventional commits format
-
-### Component Guidelines
-
-- Use functional components with hooks
-- Implement proper TypeScript interfaces
-- Follow accessibility best practices
-- Write comprehensive JSDoc comments
-
-### Testing Guidelines
-
-- Maintain 80%+ test coverage
-- Write tests for all new features
-- Use meaningful test descriptions
-- Mock external dependencies
-
-### Performance Guidelines
-
-- Implement proper loading states
-- Use React.memo for expensive components
-- Optimize images and assets
-- Implement proper caching strategies
+### Build Issues
+- **TypeScript errors**: Run `npm run type-check` to identify issues
+- **Dependency conflicts**: Delete `node_modules` and `package-lock.json`, then `npm install`
+- **Prisma issues**: Run `npm run db:generate` after schema changes
 
 ## 🤝 Contributing
 
-1. **Fork the repository**
-2. **Create a feature branch**
-   ```bash
-   git checkout -b feature/amazing-feature
-   ```
-3. **Commit your changes**
-   ```bash
-   git commit -m 'Add amazing feature'
-   ```
-4. **Push to the branch**
-   ```bash
-   git push origin feature/amazing-feature
-   ```
-5. **Open a Pull Request**
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-### Contribution Guidelines
-
-- Follow the existing code style
-- Add tests for new functionality
-- Update documentation as needed
-- Ensure all tests pass
-- Request review from maintainers
+### Development Guidelines
+- Follow TypeScript best practices
+- Write comprehensive tests for new features
+- Update documentation for API changes
+- Use conventional commit messages
+- Ensure all tests pass before submitting PR
 
 ## 📄 License
 
@@ -334,61 +373,21 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🆘 Support
 
-### Getting Help
-
-- **Documentation**: Check the [docs/](docs/) folder
-- **Issues**: Create a [GitHub issue](https://github.com/ShayneIsMagic/zero-barriers-growth-accelerator/issues)
-- **Discussions**: Join [GitHub discussions](https://github.com/ShayneIsMagic/zero-barriers-growth-accelerator/discussions)
-- **Email**: hello@zerobarriers.com
-
-### Common Issues
-
-- **Database connection errors**: Check DATABASE_URL and ensure PostgreSQL is running
-- **Redis connection errors**: Verify Redis is running and REDIS_URL is correct
-- **Authentication issues**: Check NEXTAUTH_SECRET and OAuth provider configuration
-- **AI analysis failures**: Verify OpenAI API key and Pinecone configuration
-
-## 🗺️ Roadmap
-
-### Phase 1: Core Platform (Q1 2024)
-
-- [x] Project setup and architecture
-- [x] Basic authentication system
-- [x] Core analysis framework
-- [ ] AI integration
-- [ ] Basic dashboard
-
-### Phase 2: Advanced Features (Q2 2024)
-
-- [ ] Advanced analytics
-- [ ] Team collaboration
-- [ ] API access
-- [ ] Integration marketplace
-
-### Phase 3: Enterprise Features (Q3 2024)
-
-- [ ] Advanced security
-- [ ] Compliance features
-- [ ] Enterprise SSO
-- [ ] Advanced reporting
-
-### Phase 4: AI Enhancement (Q4 2024)
-
-- [ ] Custom AI models
-- [ ] Predictive analytics
-- [ ] Automated optimization
-- [ ] Industry-specific insights
+- **Documentation**: [Project Wiki](https://github.com/ShayneIsMagic/zero-barriers-growth-accelerator/wiki)
+- **Issues**: [GitHub Issues](https://github.com/ShayneIsMagic/zero-barriers-growth-accelerator/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/ShayneIsMagic/zero-barriers-growth-accelerator/discussions)
+- **Email**: support@zerobarriers.io
 
 ## 🙏 Acknowledgments
 
 - **Simon Sinek** for the Golden Circle framework
-- **Bain & Company** for Consumer Elements of Value
-- **Gallup** for CliftonStrengths framework
+- **Bain & Company** for Elements of Value research
+- **Gallup** for CliftonStrengths assessment framework
 - **OpenAI** for GPT-4 technology
-- **Vercel** for Next.js and hosting platform
+- **Vercel** for Next.js and deployment platform
 
 ---
 
 **Built with ❤️ by the Zero Barriers team**
 
-For questions, support, or collaboration, reach out to us at [hello@zerobarriers.com](mailto:hello@zerobarriers.com)
+*Last updated: December 2024*
