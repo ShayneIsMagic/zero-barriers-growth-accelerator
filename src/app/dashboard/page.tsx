@@ -222,22 +222,22 @@ export default function DashboardPage() {
               </div>
             ) : (
               <div className="space-y-4">
-                {recentAnalyses.map((analysis) => (
+                {recentAnalyses.filter(analysis => analysis && analysis.id).map((analysis) => (
                   <div key={analysis.id} className="flex items-center justify-between p-3 border rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
                         <ExternalLink className="h-3 w-3 text-slate-400" />
                         <h4 className="font-semibold truncate">
-                          {analysis.url.replace(/^https?:\/\//, '')}
+                          {analysis.url ? analysis.url.replace(/^https?:\/\//, '') : 'Unknown URL'}
                         </h4>
                       </div>
                       <div className="flex items-center gap-2 text-xs text-slate-500">
                         <Calendar className="h-3 w-3" />
-                        {formatDate(analysis.createdAt)}
+                        {analysis.createdAt ? formatDate(analysis.createdAt) : 'Unknown Date'}
                       </div>
                     </div>
-                    <Badge variant={getScoreBadgeVariant(analysis.overallScore)}>
-                      {analysis.overallScore}/100
+                    <Badge variant={getScoreBadgeVariant(analysis.overallScore || 0)}>
+                      {analysis.overallScore || 0}/100
                     </Badge>
                   </div>
                 ))}

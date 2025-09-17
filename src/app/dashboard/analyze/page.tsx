@@ -7,7 +7,7 @@ import { AnalysisClient, AnalysisResult } from '@/lib/analysis-client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { History, Trash2, ExternalLink, Calendar } from 'lucide-react';
+import { History, Trash2, ExternalLink, Calendar, Target } from 'lucide-react';
 import Link from 'next/link';
 
 export default function AnalyzePage() {
@@ -53,10 +53,25 @@ export default function AnalyzePage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Website Analysis</h1>
-        <p className="text-slate-600 dark:text-slate-300">
-          Analyze any website using proven business frameworks to identify growth opportunities
-        </p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold mb-2">Website Analysis</h1>
+            <p className="text-slate-600 dark:text-slate-300">
+              Analyze any website using proven business frameworks to identify growth opportunities
+            </p>
+          </div>
+          <Button 
+            onClick={() => {
+              setSelectedAnalysis(null);
+              setShowHistory(false);
+            }}
+            variant="outline"
+            className="flex items-center gap-2"
+          >
+            <Target className="h-4 w-4" />
+            New Analysis
+          </Button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -75,13 +90,33 @@ export default function AnalyzePage() {
         <div className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <History className="h-5 w-5" />
-                Analysis History
-              </CardTitle>
-              <CardDescription>
-                {analyses.length} analysis{analyses.length !== 1 ? 'es' : ''} completed
-              </CardDescription>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <History className="h-5 w-5" />
+                    Analysis History
+                  </CardTitle>
+                  <CardDescription>
+                    {analyses.length} analysis{analyses.length !== 1 ? 'es' : ''} completed
+                  </CardDescription>
+                </div>
+                {analyses.length > 0 && (
+                  <Button
+                    onClick={() => {
+                      if (confirm('Are you sure you want to clear all analyses? This action cannot be undone.')) {
+                        analyses.forEach(analysis => AnalysisClient.deleteAnalysis(analysis.id));
+                        setAnalyses([]);
+                        setSelectedAnalysis(null);
+                      }
+                    }}
+                    variant="outline"
+                    size="sm"
+                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
             </CardHeader>
             <CardContent>
               {analyses.length === 0 ? (
@@ -107,12 +142,12 @@ export default function AnalyzePage() {
                           <div className="flex items-center gap-2 mb-1">
                             <ExternalLink className="h-3 w-3 text-slate-400" />
                             <span className="text-sm font-medium truncate">
-                              {analysis.url.replace(/^https?:\/\//, '')}
+                              {analysis.url ? analysis.url.replace(/^https?:\/\//, '') : 'Unknown URL'}
                             </span>
                           </div>
                           <div className="flex items-center gap-2 text-xs text-slate-500">
                             <Calendar className="h-3 w-3" />
-                            {formatDate(analysis.createdAt)}
+                            {analysis.createdAt ? formatDate(analysis.createdAt) : 'Unknown Date'}
                           </div>
                         </div>
                         <div className="flex items-center gap-2">

@@ -78,21 +78,37 @@ export class AnalysisClient {
   }
 
   // Analyze website using external AI service
-  static async analyzeWebsite(url: string): Promise<AnalysisResult> {
+  static async analyzeWebsite(url: string, provider: string = 'openai'): Promise<AnalysisResult> {
     try {
-      // First, try to fetch the website content
-      const content = await this.fetchWebsiteContent(url);
-      
-      // Then analyze with AI
-      const analysis = await this.analyzeWithAI(url, content);
-      
-      // Save to localStorage
-      this.saveAnalysis(analysis);
-      
-      return analysis;
+      // Try to use the enhanced AI service first
+      const response = await fetch('/api/analyze/website/enhanced', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ url, provider }),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        const analysis = result.analysis;
+        
+        // Save to localStorage
+        this.saveAnalysis(analysis);
+        
+        return analysis;
+      } else {
+        // Fall back to demo analysis if API fails
+        console.warn('Enhanced AI service unavailable, using demo analysis');
+        const analysis = await this.analyzeWithAI(url, '');
+        this.saveAnalysis(analysis);
+        return analysis;
+      }
     } catch (error) {
-      console.error('Analysis failed:', error);
-      throw new Error(`Analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.warn('Enhanced AI service error, using demo analysis:', error);
+      const analysis = await this.analyzeWithAI(url, '');
+      this.saveAnalysis(analysis);
+      return analysis;
     }
   }
 
@@ -110,17 +126,22 @@ export class AnalysisClient {
       const data = await response.json();
       const html = data.contents;
       
-      // Basic HTML parsing to extract text content
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(html, 'text/html');
+      // Simple regex-based HTML parsing for server-side
+      // Remove script and style tags
+      let cleanHtml = html
+        .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
+        .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
+        .replace(/<nav[^>]*>[\s\S]*?<\/nav>/gi, '')
+        .replace(/<header[^>]*>[\s\S]*?<\/header>/gi, '')
+        .replace(/<footer[^>]*>[\s\S]*?<\/footer>/gi, '');
       
-      // Remove script and style elements
-      const scripts = doc.querySelectorAll('script, style, nav, header, footer');
-      scripts.forEach(el => el.remove());
+      // Extract text content by removing HTML tags
+      const textContent = cleanHtml
+        .replace(/<[^>]*>/g, ' ') // Remove HTML tags
+        .replace(/\s+/g, ' ') // Replace multiple spaces with single space
+        .trim();
       
-      // Extract text content
-      const textContent = doc.body?.textContent || '';
-      return textContent.replace(/\s+/g, ' ').trim();
+      return textContent;
     } catch (error) {
       console.error('Error fetching website content:', error);
       throw new Error(`Failed to fetch website content: ${error instanceof Error ? error.message : 'Unknown error'}`);

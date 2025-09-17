@@ -1,8 +1,12 @@
 export interface AnalysisResult {
+  id: string;
+  url: string;
+  createdAt: string;
   goldenCircle: {
     why: string;
     how: string;
     what: string;
+    who: string;
     overallScore: number;
     insights: string[];
   };
@@ -18,6 +22,7 @@ export interface AnalysisResult {
     themes: { [key: string]: number };
     recommendations: string[];
     overallScore: number;
+    insights: string[];
   };
   recommendations: {
     priority: 'high' | 'medium' | 'low';
@@ -30,6 +35,298 @@ export interface AnalysisResult {
 }
 
 export class DemoAnalysisService {
+  static async analyzeContent(content: string, contentType: 'website' | 'text' | 'document' = 'text', url?: string): Promise<AnalysisResult> {
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
+    // Extract domain from URL for more individualized analysis
+    const domain = url ? new URL(url).hostname.toLowerCase() : '';
+    const isTechCompany = content.toLowerCase().includes('technology') || content.toLowerCase().includes('innovation') || 
+                         domain.includes('tech') || domain.includes('software') || domain.includes('ai') || domain.includes('digital');
+    const isEcommerce = content.toLowerCase().includes('shop') || content.toLowerCase().includes('buy') || content.toLowerCase().includes('purchase') ||
+                       domain.includes('shop') || domain.includes('store') || domain.includes('marketplace');
+    const isSaaS = content.toLowerCase().includes('software') || content.toLowerCase().includes('platform') || content.toLowerCase().includes('api') ||
+                  domain.includes('app') || domain.includes('cloud') || domain.includes('saas');
+    const isConsulting = domain.includes('consulting') || domain.includes('consultants') || domain.includes('advisory');
+    const isEducation = domain.includes('edu') || domain.includes('university') || domain.includes('school') || domain.includes('academy');
+    const isHealthcare = domain.includes('health') || domain.includes('medical') || domain.includes('clinic') || domain.includes('hospital');
+
+    let goldenCircleScore = 75;
+    let elementsOfValueScore = 70;
+    let cliftonStrengthsScore = 65;
+    let summary = `This is a demo analysis of ${contentType} content. The content shows potential but has room for improvement in key areas.`;
+
+    if (isTechCompany) {
+      goldenCircleScore = 90;
+      elementsOfValueScore = 85;
+      cliftonStrengthsScore = 80;
+      summary = `This tech-focused ${contentType} demonstrates strong innovation and clear value proposition. The content effectively communicates the company's mission and products.`;
+    } else if (isEcommerce) {
+      goldenCircleScore = 80;
+      elementsOfValueScore = 90;
+      cliftonStrengthsScore = 70;
+      summary = `This e-commerce focused ${contentType} excels in functional value and user experience. The product presentation and shopping experience are well-optimized.`;
+    } else if (isSaaS) {
+      goldenCircleScore = 85;
+      elementsOfValueScore = 88;
+      cliftonStrengthsScore = 78;
+      summary = `This SaaS-focused ${contentType} provides excellent functional value and clear solutions. The content effectively communicates the software's benefits and use cases.`;
+    } else if (isConsulting) {
+      goldenCircleScore = 88;
+      elementsOfValueScore = 82;
+      cliftonStrengthsScore = 85;
+      summary = `This consulting-focused ${contentType} demonstrates strong expertise and client value. The content effectively showcases professional capabilities and industry knowledge.`;
+    } else if (isEducation) {
+      goldenCircleScore = 82;
+      elementsOfValueScore = 85;
+      cliftonStrengthsScore = 78;
+      summary = `This education-focused ${contentType} provides valuable learning content and clear educational pathways. The content effectively communicates knowledge and learning opportunities.`;
+    } else if (isHealthcare) {
+      goldenCircleScore = 85;
+      elementsOfValueScore = 88;
+      cliftonStrengthsScore = 82;
+      summary = `This healthcare-focused ${contentType} demonstrates strong patient care focus and medical expertise. The content effectively communicates trust and professional healthcare services.`;
+    }
+
+    return {
+      id: `demo-${Date.now()}`,
+      url: url || 'demo-content',
+      createdAt: new Date().toISOString(),
+      goldenCircle: {
+        why: isTechCompany 
+          ? "The company's mission to innovate and improve lives through technology is clearly communicated."
+          : "The core purpose and mission could be more prominently featured and emotionally compelling.",
+        how: isTechCompany
+          ? "The approach is well-defined through cutting-edge technology and user-centered design."
+          : "The methodology and approach are present but could be more distinctive and differentiated.",
+        what: isTechCompany
+          ? "Products and services are clearly defined and aligned with the company's mission."
+          : "The offerings are clear but could better connect to the underlying purpose and values.",
+        overallScore: goldenCircleScore,
+        insights: [
+          isTechCompany ? "Excellent articulation of company mission and values" : "Consider strengthening the 'Why' messaging to create deeper emotional connections",
+          isTechCompany ? "Clear differentiation through innovation and technology" : "The 'How' could be more distinctive and compelling",
+          isTechCompany ? "Strong alignment between products and mission" : "Ensure the 'What' consistently reflects the 'Why' and 'How'"
+        ]
+      },
+      elementsOfValue: {
+        functional: {
+          savesTime: isTechCompany ? 9 : isEcommerce ? 8 : isSaaS ? 9 : 7,
+          simplifies: isTechCompany ? 8 : isEcommerce ? 9 : isSaaS ? 9 : 7,
+          makesMoney: isTechCompany ? 7 : isEcommerce ? 8 : isSaaS ? 9 : 6,
+          reducesRisk: isTechCompany ? 7 : isEcommerce ? 6 : isSaaS ? 8 : 6,
+          organizes: isTechCompany ? 7 : isEcommerce ? 8 : isSaaS ? 8 : 6,
+          integrates: isTechCompany ? 9 : isEcommerce ? 7 : isSaaS ? 9 : 6,
+          connects: isTechCompany ? 7 : isEcommerce ? 8 : isSaaS ? 7 : 6,
+          reducesEffort: isTechCompany ? 8 : isEcommerce ? 9 : isSaaS ? 9 : 7,
+          avoidsHassle: isTechCompany ? 8 : isEcommerce ? 8 : isSaaS ? 8 : 7,
+          quality: isTechCompany ? 9 : isEcommerce ? 8 : isSaaS ? 8 : 7,
+          variety: isTechCompany ? 7 : isEcommerce ? 9 : isSaaS ? 7 : 7,
+          sensoryAppeal: isTechCompany ? 7 : isEcommerce ? 8 : isSaaS ? 6 : 6,
+          informs: isTechCompany ? 8 : isEcommerce ? 7 : isSaaS ? 9 : 7,
+          badge: isTechCompany ? 7 : isEcommerce ? 8 : isSaaS ? 7 : 6,
+          design: isTechCompany ? 9 : isEcommerce ? 8 : isSaaS ? 7 : 7,
+          customization: isTechCompany ? 8 : isEcommerce ? 9 : isSaaS ? 8 : 7,
+          reducesCost: isTechCompany ? 6 : isEcommerce ? 9 : isSaaS ? 8 : 7,
+          reducesWaste: isTechCompany ? 6 : isEcommerce ? 7 : isSaaS ? 7 : 6,
+          authenticity: isTechCompany ? 7 : isEcommerce ? 8 : isSaaS ? 7 : 7,
+          belonging: isTechCompany ? 6 : isEcommerce ? 8 : isSaaS ? 7 : 6,
+          funEntertainment: isTechCompany ? 7 : isEcommerce ? 8 : isSaaS ? 6 : 6,
+          attractiveness: isTechCompany ? 8 : isEcommerce ? 9 : isSaaS ? 7 : 7,
+          wellness: isTechCompany ? 6 : isEcommerce ? 7 : isSaaS ? 6 : 6,
+          reducesAnxiety: isTechCompany ? 7 : isEcommerce ? 8 : isSaaS ? 8 : 7,
+          rewards: isTechCompany ? 7 : isEcommerce ? 9 : isSaaS ? 8 : 7,
+          nostalgia: isTechCompany ? 5 : isEcommerce ? 7 : isSaaS ? 5 : 5,
+          designAesthetics: isTechCompany ? 9 : isEcommerce ? 8 : isSaaS ? 7 : 7,
+          selfActualization: isTechCompany ? 8 : isEcommerce ? 6 : isSaaS ? 8 : 7,
+          providesHope: isTechCompany ? 7 : isEcommerce ? 6 : isSaaS ? 7 : 6,
+          motivation: isTechCompany ? 8 : isEcommerce ? 7 : isSaaS ? 8 : 7
+        },
+        emotional: {
+          reducesAnxiety: isTechCompany ? 7 : isEcommerce ? 8 : isSaaS ? 8 : 7,
+          rewards: isTechCompany ? 7 : isEcommerce ? 9 : isSaaS ? 8 : 7,
+          nostalgia: isTechCompany ? 5 : isEcommerce ? 7 : isSaaS ? 5 : 5,
+          designAesthetics: isTechCompany ? 9 : isEcommerce ? 8 : isSaaS ? 7 : 7,
+          funEntertainment: isTechCompany ? 7 : isEcommerce ? 8 : isSaaS ? 6 : 6,
+          attractiveness: isTechCompany ? 8 : isEcommerce ? 9 : isSaaS ? 7 : 7,
+          wellness: isTechCompany ? 6 : isEcommerce ? 7 : isSaaS ? 6 : 6,
+          belonging: isTechCompany ? 6 : isEcommerce ? 8 : isSaaS ? 7 : 6,
+          providesAccess: isTechCompany ? 8 : isEcommerce ? 9 : isSaaS ? 8 : 7,
+          simplifies: isTechCompany ? 8 : isEcommerce ? 9 : isSaaS ? 9 : 7,
+          makesMoney: isTechCompany ? 7 : isEcommerce ? 8 : isSaaS ? 9 : 6,
+          reducesRisk: isTechCompany ? 7 : isEcommerce ? 6 : isSaaS ? 8 : 6,
+          organizes: isTechCompany ? 7 : isEcommerce ? 8 : isSaaS ? 8 : 6,
+          integrates: isTechCompany ? 9 : isEcommerce ? 7 : isSaaS ? 9 : 6,
+          connects: isTechCompany ? 7 : isEcommerce ? 8 : isSaaS ? 7 : 6,
+          reducesEffort: isTechCompany ? 8 : isEcommerce ? 9 : isSaaS ? 9 : 7,
+          avoidsHassle: isTechCompany ? 8 : isEcommerce ? 8 : isSaaS ? 8 : 7,
+          quality: isTechCompany ? 9 : isEcommerce ? 8 : isSaaS ? 8 : 7,
+          variety: isTechCompany ? 7 : isEcommerce ? 9 : isSaaS ? 7 : 7,
+          sensoryAppeal: isTechCompany ? 7 : isEcommerce ? 8 : isSaaS ? 6 : 6,
+          informs: isTechCompany ? 8 : isEcommerce ? 7 : isSaaS ? 9 : 7,
+          badge: isTechCompany ? 7 : isEcommerce ? 8 : isSaaS ? 7 : 6,
+          design: isTechCompany ? 9 : isEcommerce ? 8 : isSaaS ? 7 : 7,
+          customization: isTechCompany ? 8 : isEcommerce ? 9 : isSaaS ? 8 : 7,
+          reducesCost: isTechCompany ? 6 : isEcommerce ? 9 : isSaaS ? 8 : 7,
+          reducesWaste: isTechCompany ? 6 : isEcommerce ? 7 : isSaaS ? 7 : 6,
+          authenticity: isTechCompany ? 7 : isEcommerce ? 8 : isSaaS ? 7 : 7,
+          selfActualization: isTechCompany ? 8 : isEcommerce ? 6 : isSaaS ? 8 : 7,
+          providesHope: isTechCompany ? 7 : isEcommerce ? 6 : isSaaS ? 7 : 6,
+          motivation: isTechCompany ? 8 : isEcommerce ? 7 : isSaaS ? 8 : 7
+        },
+        lifeChanging: {
+          providesHope: isTechCompany ? 7 : isEcommerce ? 6 : isSaaS ? 7 : 6,
+          selfActualization: isTechCompany ? 8 : isEcommerce ? 6 : isSaaS ? 8 : 7,
+          motivation: isTechCompany ? 8 : isEcommerce ? 7 : isSaaS ? 8 : 7,
+          reducesAnxiety: isTechCompany ? 7 : isEcommerce ? 8 : isSaaS ? 8 : 7,
+          rewards: isTechCompany ? 7 : isEcommerce ? 9 : isSaaS ? 8 : 7,
+          nostalgia: isTechCompany ? 5 : isEcommerce ? 7 : isSaaS ? 5 : 5,
+          designAesthetics: isTechCompany ? 9 : isEcommerce ? 8 : isSaaS ? 7 : 7,
+          funEntertainment: isTechCompany ? 7 : isEcommerce ? 8 : isSaaS ? 6 : 6,
+          attractiveness: isTechCompany ? 8 : isEcommerce ? 9 : isSaaS ? 7 : 7,
+          wellness: isTechCompany ? 6 : isEcommerce ? 7 : isSaaS ? 6 : 6,
+          belonging: isTechCompany ? 6 : isEcommerce ? 8 : isSaaS ? 7 : 6,
+          providesAccess: isTechCompany ? 8 : isEcommerce ? 9 : isSaaS ? 8 : 7,
+          simplifies: isTechCompany ? 8 : isEcommerce ? 9 : isSaaS ? 9 : 7,
+          makesMoney: isTechCompany ? 7 : isEcommerce ? 8 : isSaaS ? 9 : 6,
+          reducesRisk: isTechCompany ? 7 : isEcommerce ? 6 : isSaaS ? 8 : 6,
+          organizes: isTechCompany ? 7 : isEcommerce ? 8 : isSaaS ? 8 : 6,
+          integrates: isTechCompany ? 9 : isEcommerce ? 7 : isSaaS ? 9 : 6,
+          connects: isTechCompany ? 7 : isEcommerce ? 8 : isSaaS ? 7 : 6,
+          reducesEffort: isTechCompany ? 8 : isEcommerce ? 9 : isSaaS ? 9 : 7,
+          avoidsHassle: isTechCompany ? 8 : isEcommerce ? 8 : isSaaS ? 8 : 7,
+          quality: isTechCompany ? 9 : isEcommerce ? 8 : isSaaS ? 8 : 7,
+          variety: isTechCompany ? 7 : isEcommerce ? 9 : isSaaS ? 7 : 7,
+          sensoryAppeal: isTechCompany ? 7 : isEcommerce ? 8 : isSaaS ? 6 : 6,
+          informs: isTechCompany ? 8 : isEcommerce ? 7 : isSaaS ? 9 : 7,
+          badge: isTechCompany ? 7 : isEcommerce ? 8 : isSaaS ? 7 : 6,
+          design: isTechCompany ? 9 : isEcommerce ? 8 : isSaaS ? 7 : 7,
+          customization: isTechCompany ? 8 : isEcommerce ? 9 : isSaaS ? 8 : 7,
+          reducesCost: isTechCompany ? 6 : isEcommerce ? 9 : isSaaS ? 8 : 7,
+          reducesWaste: isTechCompany ? 6 : isEcommerce ? 7 : isSaaS ? 7 : 6,
+          authenticity: isTechCompany ? 7 : isEcommerce ? 8 : isSaaS ? 7 : 7
+        },
+        socialImpact: {
+          selfTranscendence: isTechCompany ? 8 : isEcommerce ? 6 : isSaaS ? 8 : 7,
+          providesHope: isTechCompany ? 7 : isEcommerce ? 6 : isSaaS ? 7 : 6,
+          selfActualization: isTechCompany ? 8 : isEcommerce ? 6 : isSaaS ? 8 : 7,
+          motivation: isTechCompany ? 8 : isEcommerce ? 7 : isSaaS ? 8 : 7,
+          reducesAnxiety: isTechCompany ? 7 : isEcommerce ? 8 : isSaaS ? 8 : 7,
+          rewards: isTechCompany ? 7 : isEcommerce ? 9 : isSaaS ? 8 : 7,
+          nostalgia: isTechCompany ? 5 : isEcommerce ? 7 : isSaaS ? 5 : 5,
+          designAesthetics: isTechCompany ? 9 : isEcommerce ? 8 : isSaaS ? 7 : 7,
+          funEntertainment: isTechCompany ? 7 : isEcommerce ? 8 : isSaaS ? 6 : 6,
+          attractiveness: isTechCompany ? 8 : isEcommerce ? 9 : isSaaS ? 7 : 7,
+          wellness: isTechCompany ? 6 : isEcommerce ? 7 : isSaaS ? 6 : 6,
+          belonging: isTechCompany ? 6 : isEcommerce ? 8 : isSaaS ? 7 : 6,
+          providesAccess: isTechCompany ? 8 : isEcommerce ? 9 : isSaaS ? 8 : 7,
+          simplifies: isTechCompany ? 8 : isEcommerce ? 9 : isSaaS ? 9 : 7,
+          makesMoney: isTechCompany ? 7 : isEcommerce ? 8 : isSaaS ? 9 : 6,
+          reducesRisk: isTechCompany ? 7 : isEcommerce ? 6 : isSaaS ? 8 : 6,
+          organizes: isTechCompany ? 7 : isEcommerce ? 8 : isSaaS ? 8 : 6,
+          integrates: isTechCompany ? 9 : isEcommerce ? 7 : isSaaS ? 9 : 6,
+          connects: isTechCompany ? 7 : isEcommerce ? 8 : isSaaS ? 7 : 6,
+          reducesEffort: isTechCompany ? 8 : isEcommerce ? 9 : isSaaS ? 9 : 7,
+          avoidsHassle: isTechCompany ? 8 : isEcommerce ? 8 : isSaaS ? 8 : 7,
+          quality: isTechCompany ? 9 : isEcommerce ? 8 : isSaaS ? 8 : 7,
+          variety: isTechCompany ? 7 : isEcommerce ? 9 : isSaaS ? 7 : 7,
+          sensoryAppeal: isTechCompany ? 7 : isEcommerce ? 8 : isSaaS ? 6 : 6,
+          informs: isTechCompany ? 8 : isEcommerce ? 7 : isSaaS ? 9 : 7,
+          badge: isTechCompany ? 7 : isEcommerce ? 8 : isSaaS ? 7 : 6,
+          design: isTechCompany ? 9 : isEcommerce ? 8 : isSaaS ? 7 : 7,
+          customization: isTechCompany ? 8 : isEcommerce ? 9 : isSaaS ? 8 : 7,
+          reducesCost: isTechCompany ? 6 : isEcommerce ? 9 : isSaaS ? 8 : 7,
+          reducesWaste: isTechCompany ? 6 : isEcommerce ? 7 : isSaaS ? 7 : 6,
+          authenticity: isTechCompany ? 7 : isEcommerce ? 8 : isSaaS ? 7 : 7
+        },
+        overallScore: elementsOfValueScore,
+        insights: [
+          isTechCompany ? "Strong functional value in innovation and integration" : "Focus on providing more functional value, such as 'simplifies' and 'makes money'",
+          isTechCompany ? "Excellent emotional connection through design and authenticity" : "Enhance emotional connections by emphasizing 'reduces anxiety' and 'provides access'",
+          isTechCompany ? "Good life-changing elements in self-actualization and motivation" : "Explore opportunities for life-changing value, like 'provides hope' or 'self-actualization'"
+        ]
+      },
+      cliftonStrengths: {
+        themes: {
+          'Achiever': 8,
+          'Strategic': 7,
+          'Learner': 6,
+          'Relator': 5,
+          'Activator': 7
+        },
+        recommendations: [
+          isTechCompany ? "Appeal to Strategic thinkers with long-term vision and innovation" : "Appeal to Strategic thinkers by outlining long-term vision and goals",
+          isTechCompany ? "Engage Executing themes with clear product roadmaps" : "To engage Executing themes, provide clear, actionable steps or processes",
+          isTechCompany ? "Connect with Influencing themes through thought leadership" : "For Influencing themes, use more persuasive language and calls to action"
+        ],
+        overallScore: cliftonStrengthsScore,
+        insights: [
+          isTechCompany ? "Content appeals strongly to achievement-oriented individuals" : "The content could better appeal to 'Strategic' thinkers by outlining long-term vision",
+          isTechCompany ? "Strategic thinking elements are well-presented" : "To engage 'Executing' themes, provide clear, actionable steps or processes",
+          isTechCompany ? "Good balance of collaborative and individual themes" : "For 'Influencing' themes, use more persuasive language and calls to action"
+        ]
+      },
+      recommendations: [
+        {
+          priority: 'high',
+          category: 'Golden Circle',
+          description: isTechCompany 
+            ? "Maintain your strong 'Why' messaging and consider expanding it to more touchpoints"
+            : "Strengthen your 'Why' messaging to create deeper emotional connections with your audience",
+          actionItems: [
+            isTechCompany 
+              ? "Continue highlighting your mission in key content areas"
+              : "Conduct a messaging workshop to define your core purpose",
+            isTechCompany
+              ? "Consider adding more emotional storytelling elements"
+              : "Update your homepage hero section to lead with your 'Why'",
+            isTechCompany
+              ? "Expand mission-driven content across all channels"
+              : "Incorporate storytelling that highlights your mission and values"
+          ]
+        },
+        {
+          priority: 'medium',
+          category: 'Elements of Value',
+          description: isTechCompany
+            ? "Leverage your strong functional value to enhance emotional connections"
+            : "Enhance the perceived functional value of your offerings by highlighting specific benefits",
+          actionItems: [
+            isTechCompany
+              ? "Add more customer success stories and testimonials"
+              : "Add clear value propositions to product descriptions",
+            isTechCompany
+              ? "Create content that addresses customer aspirations"
+              : "Use case studies to demonstrate how your product simplifies tasks",
+            isTechCompany
+              ? "Develop community-building features"
+              : "Implement testimonials that speak to time-saving or efficiency gains"
+          ]
+        },
+        {
+          priority: 'low',
+          category: 'CliftonStrengths',
+          description: isTechCompany
+            ? "Continue diversifying content to appeal to different personality types"
+            : "Tailor content to resonate with diverse CliftonStrengths themes to broaden appeal",
+          actionItems: [
+            isTechCompany
+              ? "Add more analytical content for data-driven individuals"
+              : "Develop content that appeals to 'Achiever' themes by showcasing results",
+            isTechCompany
+              ? "Create collaborative content for relationship builders"
+              : "Create resources for 'Learner' themes with educational content",
+            isTechCompany
+              ? "Include inspirational content for motivators"
+              : "Design calls to action that speak to 'Activator' themes"
+          ]
+        }
+      ],
+      overallScore: Math.round((goldenCircleScore + elementsOfValueScore + cliftonStrengthsScore) / 3),
+      summary
+    };
+  }
+
   static async analyzeWebsite(url: string): Promise<AnalysisResult> {
     // Simulate API delay
     await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -60,6 +357,9 @@ export class DemoAnalysisService {
 
   private static getTechCompanyAnalysis(): AnalysisResult {
     return {
+      id: `demo-${Date.now()}`,
+      url: 'demo-tech-company',
+      createdAt: new Date().toISOString(),
       goldenCircle: {
         why: 'To empower people through innovative technology that simplifies complex problems and enhances human potential.',
         how: 'Through cutting-edge research, user-centered design, and seamless integration of hardware and software solutions.',
@@ -156,6 +456,11 @@ export class DemoAnalysisService {
           'Use ideation strength for innovation and breakthrough thinking',
         ],
         overallScore: 78,
+        insights: [
+          'Strong developer and includer themes indicate community focus',
+          'High achiever and activator scores show execution capability',
+          'Communication and competition themes suggest market awareness'
+        ],
       },
       recommendations: [
         {
@@ -179,8 +484,8 @@ export class DemoAnalysisService {
             'Develop contextual help and support systems',
           ],
         },
-      ],
-      overallScore: 82,
+        ],
+        overallScore: 82,
       summary:
         'This tech company demonstrates strong Golden Circle alignment with clear innovation focus. High scores in design aesthetics, quality, and functional value elements. Strong achiever and focus themes suggest excellent execution capabilities. Recommendations focus on enhancing emotional connection and user experience simplification.',
     };
@@ -188,6 +493,9 @@ export class DemoAnalysisService {
 
   private static getEcommerceAnalysis(): AnalysisResult {
     return {
+      id: `demo-${Date.now()}`,
+      url: 'demo-ecommerce',
+      createdAt: new Date().toISOString(),
       goldenCircle: {
         why: 'To democratize commerce and make selling accessible to everyone, everywhere.',
         how: 'Through intuitive platforms, comprehensive tools, and supportive communities that remove barriers to entrepreneurship.',
@@ -284,6 +592,11 @@ export class DemoAnalysisService {
           'Use achiever strength for platform growth and feature development',
         ],
         overallScore: 73,
+        insights: [
+          'Strong developer and includer themes indicate community focus',
+          'High achiever and activator scores show execution capability',
+          'Communication and competition themes suggest market awareness'
+        ],
       },
       recommendations: [
         {
@@ -315,6 +628,9 @@ export class DemoAnalysisService {
 
   private static getSaaSAnalysis(): AnalysisResult {
     return {
+      id: `demo-${Date.now()}`,
+      url: 'demo-saas',
+      createdAt: new Date().toISOString(),
       goldenCircle: {
         why: 'To empower businesses to grow faster and more efficiently through intelligent automation and data-driven insights.',
         how: 'Through seamless integrations, powerful analytics, and intuitive workflows that eliminate manual processes.',
@@ -411,6 +727,11 @@ export class DemoAnalysisService {
           'Use achiever and focus strengths for consistent product development',
         ],
         overallScore: 76,
+        insights: [
+          'Strong analytical and strategic themes support data-driven approach',
+          'High achiever and focus scores indicate consistent execution',
+          'Good balance of technical and communication strengths'
+        ],
       },
       recommendations: [
         {
@@ -442,6 +763,9 @@ export class DemoAnalysisService {
 
   private static getGenericAnalysis(): AnalysisResult {
     return {
+      id: `demo-${Date.now()}`,
+      url: 'demo-generic',
+      createdAt: new Date().toISOString(),
       goldenCircle: {
         why: 'To provide value and solve problems for our customers through innovative solutions and exceptional service.',
         how: 'Through dedicated team members, proven processes, and customer-focused approach that prioritizes quality and reliability.',
@@ -538,6 +862,11 @@ export class DemoAnalysisService {
           'Identify and leverage core strengths for competitive advantage',
         ],
         overallScore: 60,
+        insights: [
+          'Average scores across all themes indicate room for improvement',
+          'Generic positioning limits appeal to specific personality types',
+          'Need to identify and leverage core strengths for differentiation'
+        ],
       },
       recommendations: [
         {

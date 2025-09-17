@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,6 +8,9 @@ import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, ExternalLink, CheckCircle, AlertCircle } from 'lucide-react';
 import { AnalysisClient, AnalysisResult } from '@/lib/analysis-client';
+import { AIProviderSelector, AI_PROVIDERS } from './AIProviderSelector';
+import { AIProvider } from '@/lib/ai-providers';
+import { EnhancedAIService } from '@/lib/enhanced-ai-service';
 
 interface WebsiteAnalysisFormProps {
   onAnalysisComplete?: (analysis: AnalysisResult) => void;
@@ -19,6 +22,23 @@ export function WebsiteAnalysisForm({ onAnalysisComplete }: WebsiteAnalysisFormP
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
+  const [selectedProvider, setSelectedProvider] = useState<AIProvider>('openai');
+  const [availableProviders, setAvailableProviders] = useState<typeof AI_PROVIDERS>([]);
+
+  useEffect(() => {
+    // Check which providers are available
+    const providers = AI_PROVIDERS.map(provider => ({
+      ...provider,
+      available: EnhancedAIService.isProviderAvailable(provider.id)
+    }));
+    setAvailableProviders(providers);
+    
+    // Set default provider to first available one
+    const firstAvailable = providers.find(p => p.available);
+    if (firstAvailable) {
+      setSelectedProvider(firstAvailable.id);
+    }
+  }, []);
 
   const validateUrl = (url: string): boolean => {
     try {
@@ -57,18 +77,29 @@ export function WebsiteAnalysisForm({ onAnalysisComplete }: WebsiteAnalysisFormP
         });
       }, 200);
 
-      const result = await AnalysisClient.analyzeWebsite(url);
+      // Use enhanced AI service for analysis
+      const result = await AnalysisClient.analyzeWebsite(url, selectedProvider);
       
       clearInterval(progressInterval);
       setProgress(100);
       
       setAnalysis(result);
       onAnalysisComplete?.(result);
+      
+      // Redirect to detailed analysis view
+      window.location.href = `/analysis/${result.id}`;
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Analysis failed. Please try again.');
     } finally {
       setIsAnalyzing(false);
     }
+  };
+
+  const handleClear = () => {
+    setUrl('');
+    setAnalysis(null);
+    setError(null);
+    setProgress(0);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -90,30 +121,49 @@ export function WebsiteAnalysisForm({ onAnalysisComplete }: WebsiteAnalysisFormP
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex gap-2">
-            <Input
-              type="url"
-              placeholder="https://example.com"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-              onKeyPress={handleKeyPress}
-              disabled={isAnalyzing}
-              className="flex-1"
-            />
-            <Button 
-              onClick={handleAnalyze} 
-              disabled={isAnalyzing || !url.trim()}
-              className="min-w-[120px]"
-            >
-              {isAnalyzing ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Analyzing...
-                </>
-              ) : (
-                'Analyze'
-              )}
-            </Button>
+          <div className="space-y-4">
+            <div className="flex gap-2">
+              <Input
+                type="url"
+                placeholder="https://example.com"
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                onKeyPress={handleKeyPress}
+                disabled={isAnalyzing}
+                className="flex-1"
+              />
+              <Button 
+                onClick={handleAnalyze} 
+                disabled={isAnalyzing || !url.trim()}
+                className="min-w-[120px]"
+              >
+                {isAnalyzing ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Analyzing...
+                  </>
+                ) : (
+                  'Analyze'
+                )}
+              </Button>
+              <Button 
+                onClick={handleClear} 
+                disabled={isAnalyzing}
+                variant="outline"
+                className="min-w-[80px]"
+              >
+                Clear
+              </Button>
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium">AI Provider</label>
+              <AIProviderSelector
+                selectedProvider={selectedProvider}
+                onProviderChange={setSelectedProvider}
+                providers={availableProviders}
+              />
+            </div>
           </div>
 
           {error && (

@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User } from '@/lib/auth';
+import { DemoAuthService, DemoUser } from '@/lib/demo-auth';
 
 interface AuthContextType {
   user: User | null;
@@ -24,10 +25,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const checkAuth = async () => {
     try {
-      const response = await fetch('/api/auth/me');
-      if (response.ok) {
-        const userData = await response.json();
-        setUser(userData.user);
+      // Use demo auth service for static deployment
+      const user = await DemoAuthService.getCurrentUser();
+      if (user) {
+        setUser(user as User);
       }
     } catch (error) {
       console.error('Auth check failed:', error);
@@ -38,21 +39,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signIn = async (email: string, password: string): Promise<boolean> => {
     try {
-      const response = await fetch('/api/auth/signin', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setUser(data.user);
+      // Use demo auth service for static deployment
+      const user = await DemoAuthService.signIn(email, password);
+      if (user) {
+        setUser(user as User);
         return true;
-      } else {
-        const error = await response.json();
-        console.error('Signin failed:', error);
-        return false;
       }
+      return false;
     } catch (error) {
       console.error('Signin error:', error);
       return false;
@@ -65,21 +58,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     name: string
   ): Promise<boolean> => {
     try {
-      const response = await fetch('/api/auth/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, name }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setUser(data.user);
+      // Use demo auth service for static deployment
+      const user = await DemoAuthService.signUp(email, password, name);
+      if (user) {
+        setUser(user as User);
         return true;
-      } else {
-        const error = await response.json();
-        console.error('Signup failed:', error);
-        return false;
       }
+      return false;
     } catch (error) {
       console.error('Signup error:', error);
       return false;
@@ -88,7 +73,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     try {
-      await fetch('/api/auth/signout', { method: 'POST' });
+      // Use demo auth service for static deployment
+      await DemoAuthService.signOut();
       setUser(null);
     } catch (error) {
       console.error('Signout error:', error);
