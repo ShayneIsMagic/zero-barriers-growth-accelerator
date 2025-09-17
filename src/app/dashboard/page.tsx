@@ -1,208 +1,301 @@
 'use client';
 
-import { useAuth } from '@/contexts/auth-context';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { useState, useEffect } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import {
-  Shield,
-  BarChart3,
-  FileText,
-  Settings,
-  LogOut,
-  Globe,
-} from 'lucide-react';
+import { TrendingUp, Target, BarChart3, Users, ArrowRight, History, Settings, ExternalLink, Calendar } from 'lucide-react';
 import Link from 'next/link';
+import { AnalysisClient, AnalysisResult } from '@/lib/analysis-client';
 
 export default function DashboardPage() {
-  const { user, loading, signOut } = useAuth();
-  const router = useRouter();
+  const [analyses, setAnalyses] = useState<AnalysisResult[]>([]);
+  const [recentAnalyses, setRecentAnalyses] = useState<AnalysisResult[]>([]);
 
   useEffect(() => {
-    if (!loading && !user) {
-      router.push('/auth/signin');
-    }
-  }, [user, loading, router]);
+    // Load saved analyses from localStorage
+    const savedAnalyses = AnalysisClient.getAnalyses();
+    setAnalyses(savedAnalyses);
+    setRecentAnalyses(savedAnalyses.slice(0, 3)); // Show only 3 most recent
+  }, []);
 
-  if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center">
-          <div className="mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-growth-600"></div>
-          <p className="mt-4 text-growth-600">Loading...</p>
-        </div>
-      </div>
-    );
-  }
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
 
-  if (!user) {
-    return null;
-  }
+  const getScoreColor = (score: number) => {
+    if (score >= 80) return 'text-green-600';
+    if (score >= 60) return 'text-yellow-600';
+    return 'text-red-600';
+  };
 
-  const handleSignOut = async () => {
-    await signOut();
-    router.push('/');
+  const getScoreBadgeVariant = (score: number) => {
+    if (score >= 80) return 'default';
+    if (score >= 60) return 'secondary';
+    return 'destructive';
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-growth-50 to-growth-100">
-      {/* Header */}
-      <header className="border-b border-growth-200 bg-white shadow-sm">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <h1 className="text-2xl font-bold text-growth-900">
-                Zero Barriers Growth Accelerator
-              </h1>
+    <div className="container mx-auto px-4 py-8">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold mb-2">Dashboard</h1>
+        <p className="text-slate-600 dark:text-slate-300">
+          Welcome to your growth acceleration command center
+        </p>
+      </div>
+
+      {/* Quick Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center">
+              <div className="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg">
+                <Target className="h-6 w-6 text-blue-600" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-slate-600">Total Analyses</p>
+                <p className="text-2xl font-bold">{analyses.length}</p>
+              </div>
             </div>
-            <div className="flex items-center space-x-4">
-              <Badge
-                variant="secondary"
-                className="bg-growth-100 text-growth-700"
-              >
-                <Shield className="mr-1 h-3 w-3" />
-                {user.role}
-              </Badge>
-              <Button
-                variant="outline"
-                onClick={handleSignOut}
-                className="border-growth-200 text-growth-700 hover:bg-growth-50"
-              >
-                <LogOut className="mr-2 h-4 w-4" />
-                Sign Out
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
+          </CardContent>
+        </Card>
 
-      {/* Main Content */}
-      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        {/* Welcome Section */}
-        <div className="mb-8">
-          <h2 className="mb-2 text-3xl font-bold text-growth-900">
-            Welcome back, {user.name || 'User'}! 👋
-          </h2>
-          <p className="text-growth-600">
-            Ready to accelerate your growth? Let&apos;s analyze some content.
-          </p>
-        </div>
-
-        {/* Quick Stats */}
-        <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-3">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-growth-600">
-                Total Analyses
-              </CardTitle>
-              <BarChart3 className="h-4 w-4 text-growth-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-growth-900">0</div>
-              <p className="text-xs text-growth-600">
-                Start your first analysis
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-growth-600">
-                Average Score
-              </CardTitle>
-              <BarChart3 className="h-4 w-4 text-growth-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-growth-900">-</div>
-              <p className="text-xs text-growth-600">No analyses yet</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-growth-600">
-                This Month
-              </CardTitle>
-              <BarChart3 className="h-4 w-4 text-growth-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-growth-900">0</div>
-              <p className="text-xs text-growth-600">New analyses</p>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Quick Actions */}
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          <Link href="/dashboard/analyze">
-            <Card className="cursor-pointer transition-shadow hover:shadow-lg">
-              <CardHeader>
-                <CardTitle className="flex items-center text-growth-900">
-                  <Globe className="mr-2 h-5 w-5" />
-                  Website Analysis
-                </CardTitle>
-                <CardDescription className="text-growth-600">
-                  Analyze any website using proven business frameworks
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button className="w-full bg-growth-600 hover:bg-growth-700">
-                  Analyze Website
-                </Button>
-              </CardContent>
-            </Card>
-          </Link>
-
-          <Card className="cursor-pointer transition-shadow hover:shadow-lg">
-            <CardHeader>
-              <CardTitle className="flex items-center text-growth-900">
-                <Settings className="mr-2 h-5 w-5" />
-                Account Settings
-              </CardTitle>
-              <CardDescription className="text-growth-600">
-                Manage your profile, password, and preferences
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button
-                variant="outline"
-                className="w-full border-growth-200 text-growth-700 hover:bg-growth-50"
-              >
-                Manage Account
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Recent Activity */}
-        <div className="mt-8">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-growth-900">Recent Activity</CardTitle>
-              <CardDescription className="text-growth-600">
-                Your latest analyses and insights
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="py-8 text-center text-growth-500">
-                <FileText className="mx-auto mb-4 h-12 w-12 opacity-50" />
-                <p>No analyses yet</p>
-                <p className="text-sm">
-                  Start your first analysis to see your activity here
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center">
+              <div className="p-2 bg-green-100 dark:bg-green-900 rounded-lg">
+                <TrendingUp className="h-6 w-6 text-green-600" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-slate-600">Average Score</p>
+                <p className="text-2xl font-bold">
+                  {analyses.length > 0 
+                    ? Math.round(analyses.reduce((acc, a) => acc + a.overallScore, 0) / analyses.length)
+                    : 0
+                  }
                 </p>
               </div>
-            </CardContent>
-          </Card>
-        </div>
-      </main>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center">
+              <div className="p-2 bg-purple-100 dark:bg-purple-900 rounded-lg">
+                <BarChart3 className="h-6 w-6 text-purple-600" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-slate-600">Best Score</p>
+                <p className="text-2xl font-bold">
+                  {analyses.length > 0 
+                    ? Math.max(...analyses.map(a => a.overallScore))
+                    : 0
+                  }
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center">
+              <div className="p-2 bg-orange-100 dark:bg-orange-900 rounded-lg">
+                <Users className="h-6 w-6 text-orange-600" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-slate-600">Frameworks</p>
+                <p className="text-2xl font-bold">3</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Quick Actions */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Target className="h-5 w-5 text-blue-600" />
+              New Analysis
+            </CardTitle>
+            <CardDescription>
+              Analyze a new website or piece of content
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button asChild className="w-full">
+              <Link href="/dashboard/analyze">
+                Start Analysis
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <History className="h-5 w-5 text-green-600" />
+              View History
+            </CardTitle>
+            <CardDescription>
+              Browse your previous analyses
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button variant="outline" asChild className="w-full">
+              <Link href="/dashboard/analyze">
+                View All
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <BarChart3 className="h-5 w-5 text-purple-600" />
+              Insights
+            </CardTitle>
+            <CardDescription>
+              View trends and patterns
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button variant="outline" asChild className="w-full">
+              <Link href="/dashboard/insights">
+                View Insights
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Settings className="h-5 w-5 text-gray-600" />
+              Settings
+            </CardTitle>
+            <CardDescription>
+              Manage your account
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button variant="outline" asChild className="w-full">
+              <Link href="/profile">
+                Account
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Recent Analyses */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <TrendingUp className="h-5 w-5" />
+              Recent Analyses
+            </CardTitle>
+            <CardDescription>
+              Your latest content analysis results
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {recentAnalyses.length === 0 ? (
+              <div className="text-center py-8 text-slate-500">
+                <Target className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                <p>No analyses yet</p>
+                <p className="text-sm">Start by analyzing a website</p>
+                <Button asChild className="mt-4">
+                  <Link href="/dashboard/analyze">Start Analysis</Link>
+                </Button>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {recentAnalyses.map((analysis) => (
+                  <div key={analysis.id} className="flex items-center justify-between p-3 border rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1">
+                        <ExternalLink className="h-3 w-3 text-slate-400" />
+                        <h4 className="font-semibold truncate">
+                          {analysis.url.replace(/^https?:\/\//, '')}
+                        </h4>
+                      </div>
+                      <div className="flex items-center gap-2 text-xs text-slate-500">
+                        <Calendar className="h-3 w-3" />
+                        {formatDate(analysis.createdAt)}
+                      </div>
+                    </div>
+                    <Badge variant={getScoreBadgeVariant(analysis.overallScore)}>
+                      {analysis.overallScore}/100
+                    </Badge>
+                  </div>
+                ))}
+                {analyses.length > 3 && (
+                  <div className="text-center pt-2">
+                    <Button variant="outline" asChild>
+                      <Link href="/dashboard/analyze">View All {analyses.length} Analyses</Link>
+                    </Button>
+                  </div>
+                )}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Target className="h-5 w-5" />
+              Quick Insights
+            </CardTitle>
+            <CardDescription>
+              Key findings from your analyses
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="p-3 bg-blue-50 dark:bg-blue-950 rounded-lg">
+                <h4 className="font-semibold text-blue-900 dark:text-blue-100">Golden Circle</h4>
+                <p className="text-sm text-blue-700 dark:text-blue-300">
+                  {analyses.length > 0 
+                    ? `Your content averages ${Math.round(analyses.reduce((acc, a) => acc + a.goldenCircle.overallScore, 0) / analyses.length)}/100 on Golden Circle analysis`
+                    : 'Analyze content to see Golden Circle insights'
+                  }
+                </p>
+              </div>
+              <div className="p-3 bg-green-50 dark:bg-green-950 rounded-lg">
+                <h4 className="font-semibold text-green-900 dark:text-green-100">Elements of Value</h4>
+                <p className="text-sm text-green-700 dark:text-green-300">
+                  {analyses.length > 0 
+                    ? `Strong performance in functional value elements (${Math.round(analyses.reduce((acc, a) => acc + a.elementsOfValue.overallScore, 0) / analyses.length)}/100)`
+                    : 'Analyze content to see Elements of Value scores'
+                  }
+                </p>
+              </div>
+              <div className="p-3 bg-purple-50 dark:bg-purple-950 rounded-lg">
+                <h4 className="font-semibold text-purple-900 dark:text-purple-100">CliftonStrengths</h4>
+                <p className="text-sm text-purple-700 dark:text-purple-300">
+                  {analyses.length > 0 
+                    ? `Content appeals well to Strategic and Achiever themes (${Math.round(analyses.reduce((acc, a) => acc + a.cliftonStrengths.overallScore, 0) / analyses.length)}/100)`
+                    : 'Analyze content to see CliftonStrengths insights'
+                  }
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

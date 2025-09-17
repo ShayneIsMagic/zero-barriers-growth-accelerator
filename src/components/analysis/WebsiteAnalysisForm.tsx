@@ -3,96 +3,117 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader2, Globe, AlertCircle } from 'lucide-react';
+import { Loader2, ExternalLink, CheckCircle, AlertCircle } from 'lucide-react';
+import { AnalysisClient, AnalysisResult } from '@/lib/analysis-client';
 
 interface WebsiteAnalysisFormProps {
-  onAnalysisComplete: (result: any) => void;
+  onAnalysisComplete?: (analysis: AnalysisResult) => void;
 }
 
-export function WebsiteAnalysisForm({
-  onAnalysisComplete,
-}: WebsiteAnalysisFormProps) {
+export function WebsiteAnalysisForm({ onAnalysisComplete }: WebsiteAnalysisFormProps) {
   const [url, setUrl] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [error, setError] = useState('');
+  const [progress, setProgress] = useState(0);
+  const [error, setError] = useState<string | null>(null);
+  const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const validateUrl = (url: string): boolean => {
+    try {
+      new URL(url);
+      return true;
+    } catch {
+      return false;
+    }
+  };
 
+  const handleAnalyze = async () => {
     if (!url.trim()) {
       setError('Please enter a website URL');
       return;
     }
 
-    // Basic URL validation
-    try {
-      new URL(url);
-    } catch {
+    if (!validateUrl(url)) {
       setError('Please enter a valid URL (e.g., https://example.com)');
       return;
     }
 
+    setError(null);
     setIsAnalyzing(true);
-    setError('');
+    setProgress(0);
+    setAnalysis(null);
 
     try {
-      const response = await fetch('/api/analyze/website', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ url }),
-      });
+      // Simulate progress updates
+      const progressInterval = setInterval(() => {
+        setProgress(prev => {
+          if (prev >= 90) {
+            clearInterval(progressInterval);
+            return prev;
+          }
+          return prev + Math.random() * 15;
+        });
+      }, 200);
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Analysis failed');
-      }
-
-      onAnalysisComplete(data.analysis);
+      const result = await AnalysisClient.analyzeWebsite(url);
+      
+      clearInterval(progressInterval);
+      setProgress(100);
+      
+      setAnalysis(result);
+      onAnalysisComplete?.(result);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Analysis failed');
+      setError(err instanceof Error ? err.message : 'Analysis failed. Please try again.');
     } finally {
       setIsAnalyzing(false);
     }
   };
 
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !isAnalyzing) {
+      handleAnalyze();
+    }
+  };
+
   return (
-    <Card className="mx-auto w-full max-w-2xl">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Globe className="h-5 w-5" />
-          Website Analysis
-        </CardTitle>
-        <CardDescription>
-          Enter a website URL to analyze its content using proven business
-          frameworks
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <label htmlFor="url" className="text-sm font-medium">
-              Website URL
-            </label>
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <ExternalLink className="h-5 w-5" />
+            Website Analysis
+          </CardTitle>
+          <CardDescription>
+            Enter a website URL to analyze its content using proven business frameworks
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex gap-2">
             <Input
-              id="url"
               type="url"
               placeholder="https://example.com"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
+              onKeyPress={handleKeyPress}
               disabled={isAnalyzing}
-              className="w-full"
+              className="flex-1"
             />
+            <Button 
+              onClick={handleAnalyze} 
+              disabled={isAnalyzing || !url.trim()}
+              className="min-w-[120px]"
+            >
+              {isAnalyzing ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Analyzing...
+                </>
+              ) : (
+                'Analyze'
+              )}
+            </Button>
           </div>
 
           {error && (
@@ -102,42 +123,73 @@ export function WebsiteAnalysisForm({
             </Alert>
           )}
 
-          <Button
-            type="submit"
-            disabled={isAnalyzing || !url.trim()}
-            className="w-full"
-          >
-            {isAnalyzing ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Analyzing Website...
-              </>
-            ) : (
-              'Analyze Website'
-            )}
-          </Button>
-        </form>
+          {isAnalyzing && (
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-sm">
+                <span>Analyzing website content...</span>
+                <span>{Math.round(progress)}%</span>
+              </div>
+              <Progress value={progress} className="w-full" />
+            </div>
+          )}
 
-        <div className="mt-6 rounded-lg bg-slate-50 p-4 dark:bg-slate-800">
-          <h4 className="mb-2 font-medium">Analysis Includes:</h4>
-          <ul className="space-y-1 text-sm text-slate-600 dark:text-slate-300">
-            <li>
-              • <strong>Golden Circle:</strong> Why, How, What analysis
-            </li>
-            <li>
-              • <strong>Elements of Value:</strong> 30 value elements scoring
-            </li>
-            <li>
-              • <strong>CliftonStrengths:</strong> Strength themes
-              identification
-            </li>
-            <li>
-              • <strong>Recommendations:</strong> Actionable improvement
-              suggestions
-            </li>
-          </ul>
+          {analysis && (
+            <Alert>
+              <CheckCircle className="h-4 w-4" />
+              <AlertDescription>
+                Analysis complete! Your website has been analyzed using Golden Circle, Elements of Value, and CliftonStrengths frameworks.
+              </AlertDescription>
+            </Alert>
+          )}
+        </CardContent>
+      </Card>
+
+      {analysis && (
+        <div className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Analysis Summary</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="font-medium">Overall Score</span>
+                  <div className="flex items-center gap-2">
+                    <div className="text-2xl font-bold text-blue-600">
+                      {analysis.overallScore}/100
+                    </div>
+                    <div className="w-20 bg-gray-200 rounded-full h-2">
+                      <div 
+                        className="bg-blue-600 h-2 rounded-full transition-all duration-500"
+                        style={{ width: `${analysis.overallScore}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="text-sm text-gray-600">
+                  {analysis.summary}
+                </div>
+                
+                <div className="flex items-center gap-4 text-sm">
+                  <div className="flex items-center gap-1">
+                    <div className="w-3 h-3 bg-blue-500 rounded-full" />
+                    <span>Golden Circle: {analysis.goldenCircle.overallScore}/100</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <div className="w-3 h-3 bg-green-500 rounded-full" />
+                    <span>Elements of Value: {analysis.elementsOfValue.overallScore}/100</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <div className="w-3 h-3 bg-purple-500 rounded-full" />
+                    <span>CliftonStrengths: {analysis.cliftonStrengths.overallScore}/100</span>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
-      </CardContent>
-    </Card>
+      )}
+    </div>
   );
 }
