@@ -1,12 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // GitHub Pages configuration
-  output: 'export',
-  trailingSlash: true,
-  skipTrailingSlashRedirect: true,
-  distDir: 'out',
-  assetPrefix: process.env.NODE_ENV === 'production' ? '/zero-barriers-growth-accelerator' : '',
-  basePath: process.env.NODE_ENV === 'production' ? '/zero-barriers-growth-accelerator' : '',
+  // GitHub Pages configuration - only for production builds
+  ...(process.env.BUILD_STATIC === 'true' && {
+    output: 'export',
+    trailingSlash: true,
+    skipTrailingSlashRedirect: true,
+    distDir: 'out',
+    assetPrefix: '/zero-barriers-growth-accelerator',
+    basePath: '/zero-barriers-growth-accelerator',
+  }),
   
   experimental: {
     serverComponentsExternalPackages: ['@prisma/client', 'bcryptjs'],

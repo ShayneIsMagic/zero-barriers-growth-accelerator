@@ -40,7 +40,7 @@ export default function HomePage() {
           </h1>
           <p className="text-xl text-slate-600 dark:text-slate-300 mb-8 max-w-3xl mx-auto">
             Transform your content strategy with AI-powered analysis using proven frameworks like 
-            Simon Sinek's Golden Circle, Bain's Elements of Value, and Gallup's CliftonStrengths.
+            Simon Sinek&apos;s Golden Circle, Bain&apos;s Elements of Value, and Gallup&apos;s CliftonStrengths.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/auth/signin">
@@ -73,7 +73,7 @@ export default function HomePage() {
                 <Target className="h-8 w-8 text-blue-600 mb-2" />
                 <CardTitle>Golden Circle Analysis</CardTitle>
                 <CardDescription>
-                  Analyze your content's "Why", "How", and "What" using Simon Sinek's proven framework.
+                  Analyze your content&apos;s &quot;Why&quot;, &quot;How&quot;, and &quot;What&quot; using Simon Sinek&apos;s proven framework.
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -83,7 +83,7 @@ export default function HomePage() {
                 <BarChart3 className="h-8 w-8 text-green-600 mb-2" />
                 <CardTitle>Elements of Value</CardTitle>
                 <CardDescription>
-                  Score your content against Bain's 30 Elements of Value for comprehensive insights.
+                  Score your content against Bain&apos;s 30 Elements of Value for comprehensive insights.
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -93,7 +93,7 @@ export default function HomePage() {
                 <Users className="h-8 w-8 text-purple-600 mb-2" />
                 <CardTitle>CliftonStrengths</CardTitle>
                 <CardDescription>
-                  Leverage Gallup's strengths-based approach for team and individual development.
+                  Leverage Gallup&apos;s strengths-based approach for team and individual development.
                 </CardDescription>
               </CardHeader>
             </Card>
