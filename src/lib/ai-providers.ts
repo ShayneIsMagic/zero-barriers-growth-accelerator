@@ -1,6 +1,7 @@
 import OpenAI from 'openai';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import Anthropic from '@anthropic-ai/sdk';
+import { CostMonitor } from './cost-monitor';
 
 export type AIProvider = 'openai' | 'gemini' | 'claude';
 
@@ -93,6 +94,17 @@ export class AIProviderService {
     provider: AIProvider,
     request: AnalysisRequest
   ): Promise<AnalysisResult> {
+    // Check cost limits before processing
+    const model = this.getModelForProvider(provider);
+    const costCheck = CostMonitor.checkCostLimits(provider, model, request.content.length);
+    
+    if (!costCheck.allowed) {
+      throw new Error(`Cost limit exceeded: ${costCheck.reason}`);
+    }
+
+    // Record usage for cost tracking
+    CostMonitor.recordUsage(provider, model, request.content.length);
+
     switch (provider) {
       case 'openai':
         return this.analyzeWithOpenAI(request);
@@ -105,13 +117,31 @@ export class AIProviderService {
     }
   }
 
+  private getModelForProvider(provider: AIProvider): string {
+    switch (provider) {
+      case 'openai':
+        return this.config.openai?.model || 'gpt-4o';
+      case 'gemini':
+        return this.config.gemini?.model || 'gemini-1.5-flash';
+      case 'claude':
+        return this.config.claude?.model || 'claude-3-haiku-20240307';
+      default:
+        return 'unknown';
+    }
+  }
+
   private async analyzeWithOpenAI(request: AnalysisRequest): Promise<AnalysisResult> {
     if (!this.openai) {
       throw new Error('OpenAI not configured');
     }
 
+    // Cost protection: Limit content length
+    if (request.content.length > 50000) {
+      throw new Error('Content too long. Please reduce content size to under 50,000 characters.');
+    }
+
     const prompt = this.buildAnalysisPrompt(request);
-    const model = this.config.openai?.model || 'gpt-4-turbo-preview';
+    const model = this.config.openai?.model || 'gpt-4o';
 
     try {
       const response = await this.openai.chat.completions.create({
@@ -128,6 +158,7 @@ export class AIProviderService {
         ],
         response_format: { type: 'json_object' },
         temperature: 0.7,
+        max_tokens: 2000, // Cost control
       });
 
       const rawAnalysis = response.choices[0]?.message?.content;
@@ -135,7 +166,13 @@ export class AIProviderService {
         throw new Error('OpenAI analysis returned no content.');
       }
 
-      return JSON.parse(rawAnalysis);
+      try {
+        return JSON.parse(rawAnalysis);
+      } catch (parseError) {
+        console.error('OpenAI JSON parsing failed:', parseError);
+        console.error('Raw response:', rawAnalysis.substring(0, 500) + '...');
+        throw new Error(`OpenAI returned invalid JSON: ${parseError instanceof Error ? parseError.message : 'Unknown error'}`);
+      }
     } catch (error) {
       console.error('OpenAI analysis failed:', error);
       throw new Error(`OpenAI analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -147,9 +184,19 @@ export class AIProviderService {
       throw new Error('Gemini not configured');
     }
 
+    // Cost protection: Limit content length
+    if (request.content.length > 50000) {
+      throw new Error('Content too long. Please reduce content size to under 50,000 characters.');
+    }
+
     const prompt = this.buildAnalysisPrompt(request);
     const model = this.config.gemini?.model || 'gemini-1.5-flash';
-    const generativeModel = this.gemini.getGenerativeModel({ model });
+    const generativeModel = this.gemini.getGenerativeModel({ 
+      model,
+      generationConfig: {
+        maxOutputTokens: 2000, // Cost control
+      }
+    });
 
     try {
       const result = await generativeModel.generateContent(prompt);
@@ -166,7 +213,19 @@ export class AIProviderService {
         throw new Error('No valid JSON found in Gemini response');
       }
 
-      return JSON.parse(jsonMatch[0]);
+      try {
+        // Clean the JSON string
+        const cleanedJson = jsonMatch[0]
+          .replace(/```json\n?/g, '')
+          .replace(/```\n?/g, '')
+          .trim();
+        
+        return JSON.parse(cleanedJson);
+      } catch (parseError) {
+        console.error('Gemini JSON parsing failed:', parseError);
+        console.error('Raw JSON:', jsonMatch[0].substring(0, 500) + '...');
+        throw new Error(`Gemini returned invalid JSON: ${parseError instanceof Error ? parseError.message : 'Unknown error'}`);
+      }
     } catch (error) {
       console.error('Gemini analysis failed:', error);
       throw new Error(`Gemini analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -178,13 +237,18 @@ export class AIProviderService {
       throw new Error('Claude not configured');
     }
 
+    // Cost protection: Limit content length
+    if (request.content.length > 50000) {
+      throw new Error('Content too long. Please reduce content size to under 50,000 characters.');
+    }
+
     const prompt = this.buildAnalysisPrompt(request);
     const model = this.config.claude?.model || 'claude-3-haiku-20240307';
 
     try {
       const response = await this.claude.messages.create({
         model,
-        max_tokens: 4000,
+        max_tokens: 2000, // Cost control
         messages: [
           {
             role: 'user',
@@ -209,7 +273,13 @@ export class AIProviderService {
         throw new Error('No valid JSON found in Claude response');
       }
 
-      return JSON.parse(jsonMatch[0]);
+      try {
+        return JSON.parse(jsonMatch[0]);
+      } catch (parseError) {
+        console.error('Claude JSON parsing failed:', parseError);
+        console.error('Raw JSON:', jsonMatch[0].substring(0, 500) + '...');
+        throw new Error(`Claude returned invalid JSON: ${parseError instanceof Error ? parseError.message : 'Unknown error'}`);
+      }
     } catch (error) {
       console.error('Claude analysis failed:', error);
       throw new Error(`Claude analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`);

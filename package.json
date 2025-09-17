@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:cloudflare": "node scripts/build-cloudflare.js",
     "build:static": "node scripts/prepare-static.js && BUILD_STATIC=true next build",
     "start": "next start",
     "lint": "next lint",
