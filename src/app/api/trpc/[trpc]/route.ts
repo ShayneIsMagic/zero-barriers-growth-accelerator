@@ -1,24 +1,21 @@
-import { fetchRequestHandler } from '@trpc/server/adapters/fetch';
-import { appRouter } from '@/server/routers';
-import { createContext } from '@/server/context';
+// Static fallback for GitHub Pages - tRPC won't work on static hosting
+import { NextRequest, NextResponse } from 'next/server';
 
-const handler = (req: Request) => {
-  const options: any = {
-    endpoint: '/api/trpc',
-    req,
-    router: appRouter,
-    createContext,
-  };
+// Required for static export
+export async function generateStaticParams() {
+  return [{ trpc: 'analysis' }, { trpc: 'auth' }];
+}
 
-  if (process.env.NODE_ENV === 'development') {
-    options.onError = ({ path, error }: any) => {
-      console.error(
-        `❌ tRPC failed on ${path ?? '<no-path>'}: ${error.message}`
-      );
-    };
-  }
+export async function GET(request: NextRequest) {
+  return NextResponse.json({
+    error: 'tRPC not available on static hosting',
+    message: 'This feature requires a server environment. Please run locally for full functionality.'
+  });
+}
 
-  return fetchRequestHandler(options);
-};
-
-export { handler as GET, handler as POST };
+export async function POST(request: NextRequest) {
+  return NextResponse.json({
+    error: 'tRPC not available on static hosting',
+    message: 'This feature requires a server environment. Please run locally for full functionality.'
+  });
+}
