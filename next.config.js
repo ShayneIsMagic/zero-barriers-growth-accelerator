@@ -31,9 +31,9 @@ const nextConfig = {
       },
     ];
   },
-  // Experimental features
+  // Experimental features - removed problematic esmExternals
   experimental: {
-    esmExternals: false,
+    // esmExternals: false, // This was causing build issues
   },
 };
 

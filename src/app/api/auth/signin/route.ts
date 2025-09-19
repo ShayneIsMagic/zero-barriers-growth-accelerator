@@ -1,28 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { AuthService } from '@/lib/auth';
+import { DemoAuthService } from '@/lib/demo-auth';
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, password } = await request.json();
+    const body = await request.json();
+    const { email, password } = body;
 
     if (!email || !password) {
-      return NextResponse.json(
-        { error: 'Email and password are required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Email and password are required' }, { status: 400 });
     }
 
-    const user = await AuthService.authenticateUser(email, password);
+    // For demo purposes, authenticate with demo user
+    const user = await DemoAuthService.signIn(email, password);
+    
     if (!user) {
-      return NextResponse.json(
-        { error: 'Invalid credentials' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
     }
 
-    const token = await AuthService.createToken(user);
+    // In a real app, you'd generate a JWT token here
+    const token = 'demo-token-' + Date.now();
 
-    const response = NextResponse.json({
+    return NextResponse.json({
       user: {
         id: user.id,
         email: user.email,
@@ -30,24 +28,10 @@ export async function POST(request: NextRequest) {
         role: user.role,
       },
       token,
+      message: 'Sign in successful'
     });
-
-    // Set HTTP-only cookie
-    response.cookies.set('auth-token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 7, // 7 days
-    });
-
-    return response;
   } catch (error) {
-    console.error('Signin error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    console.error('Sign in error:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
-
-

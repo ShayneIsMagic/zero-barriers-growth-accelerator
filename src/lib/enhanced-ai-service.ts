@@ -1,6 +1,6 @@
 import { AIProviderService, AIProvider, AnalysisRequest, AnalysisResult } from './ai-providers';
 import { AI_CONFIG, DEFAULT_AI_PROVIDER } from './ai-config';
-import { DemoAnalysisService } from './demo-analysis';
+import { ContentAnalyzer } from './content-analyzer';
 
 // Initialize AI provider service
 const aiProviderService = new AIProviderService(AI_CONFIG);
@@ -62,8 +62,8 @@ export class EnhancedAIService {
     const availableProviders = aiProviderService.getAvailableProviders();
     
     if (availableProviders.length === 0) {
-      console.warn('No AI providers configured, falling back to demo analysis');
-      return await DemoAnalysisService.analyzeContent(content, contentType, url);
+      console.warn('No AI providers configured, using content-based analysis');
+      return await EnhancedAIService.analyzeWithContentAnalyzer(content, contentType, url);
     }
 
     // Check if requested provider is available
@@ -73,8 +73,8 @@ export class EnhancedAIService {
         console.warn(`Provider ${provider} not available, using ${fallbackProvider}`);
         provider = fallbackProvider;
       } else {
-        console.warn('No AI providers available, falling back to demo analysis');
-        return await DemoAnalysisService.analyzeContent(content, contentType, url);
+        console.warn('No AI providers available, using content-based analysis');
+        return await EnhancedAIService.analyzeWithContentAnalyzer(content, contentType, url);
       }
     }
 
@@ -84,18 +84,47 @@ export class EnhancedAIService {
         contentType,
       };
 
-      return await aiProviderService.analyzeWithProvider(provider, request);
+      const result = await aiProviderService.analyzeWithProvider(provider, request);
+      
+      // Validate the result has the expected structure
+      if (!result || !result.goldenCircle || !result.elementsOfValue) {
+        throw new Error('AI analysis returned invalid structure');
+      }
+      
+      return result;
     } catch (error) {
       console.error('AI analysis failed:', error);
       
-      // Fallback to demo analysis if AI fails
-      console.warn('Falling back to demo analysis due to AI error');
-      return await DemoAnalysisService.analyzeContent(content, contentType, url);
+      // Fall back to content-based analysis
+      console.warn('Falling back to content-based analysis due to AI error');
+      return await EnhancedAIService.analyzeWithContentAnalyzer(content, contentType, url);
     }
   }
 
   static getAvailableProviders(): AIProvider[] {
     return aiProviderService.getAvailableProviders();
+  }
+
+  static async analyzeWithContentAnalyzer(
+    content: string, 
+    contentType: 'website' | 'text' | 'document',
+    url?: string
+  ): Promise<AnalysisResult> {
+    const contentAnalyzer = new ContentAnalyzer();
+    const result = await contentAnalyzer.analyzeContent(content, url || '', 'general');
+    
+    // Convert ContentAnalysisResult to AnalysisResult
+    return {
+      id: result.id,
+      url: result.url,
+      createdAt: result.createdAt,
+      goldenCircle: result.goldenCircle,
+      elementsOfValue: result.elementsOfValue,
+      cliftonStrengths: result.cliftonStrengths,
+      recommendations: result.recommendations,
+      overallScore: result.overallScore,
+      summary: result.summary
+    };
   }
 
   static isProviderAvailable(provider: AIProvider): boolean {

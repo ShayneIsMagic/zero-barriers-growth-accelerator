@@ -1,6 +1,6 @@
 'use client';
 
-import { AnalysisResult } from '@/lib/analysis-client';
+import { AnalysisResult } from '@/lib/ai-providers';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -11,11 +11,9 @@ import {
   Users, 
   Lightbulb, 
   CheckCircle, 
-  AlertCircle, 
   Star,
   BarChart3,
-  PieChart,
-  Activity
+  PieChart
 } from 'lucide-react';
 
 interface AnalysisVisualizationProps {
@@ -35,23 +33,6 @@ export function AnalysisVisualization({ analysis }: AnalysisVisualizationProps) 
     return 'destructive';
   };
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'high': return 'bg-red-100 text-red-800 border-red-200';
-      case 'medium': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'low': return 'bg-blue-100 text-blue-800 border-blue-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
-  };
-
-  const getPriorityIcon = (priority: string) => {
-    switch (priority) {
-      case 'high': return <AlertCircle className="h-4 w-4" />;
-      case 'medium': return <Activity className="h-4 w-4" />;
-      case 'low': return <CheckCircle className="h-4 w-4" />;
-      default: return <Star className="h-4 w-4" />;
-    }
-  };
 
   return (
     <div className="space-y-6">
@@ -121,28 +102,23 @@ export function AnalysisVisualization({ analysis }: AnalysisVisualizationProps) 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="text-center p-4 border rounded-lg bg-blue-50 dark:bg-blue-950">
                   <div className="text-2xl font-bold text-blue-600 mb-2">WHY</div>
-                  <p className="text-sm text-muted-foreground">{analysis.goldenCircle.why}</p>
+                  <p className="text-sm text-muted-foreground">{analysis.goldenCircle.why.statement}</p>
                 </div>
                 <div className="text-center p-4 border rounded-lg bg-green-50 dark:bg-green-950">
                   <div className="text-2xl font-bold text-green-600 mb-2">HOW</div>
-                  <p className="text-sm text-muted-foreground">{analysis.goldenCircle.how}</p>
+                  <p className="text-sm text-muted-foreground">{analysis.goldenCircle.how.methodology}</p>
                 </div>
                 <div className="text-center p-4 border rounded-lg bg-purple-50 dark:bg-purple-950">
                   <div className="text-2xl font-bold text-purple-600 mb-2">WHAT</div>
-                  <p className="text-sm text-muted-foreground">{analysis.goldenCircle.what}</p>
+                  <p className="text-sm text-muted-foreground">{analysis.goldenCircle.what.offerings.join(', ')}</p>
                 </div>
               </div>
               
               <div>
                 <h4 className="font-semibold mb-3">Key Insights</h4>
-                <ul className="space-y-2">
-                  {analysis.goldenCircle.insights.map((insight, index) => (
-                    <li key={index} className="flex items-start gap-2">
-                      <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                      <span className="text-sm">{insight}</span>
-                    </li>
-                  ))}
-                </ul>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {analysis.goldenCircle.summary}
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -172,9 +148,9 @@ export function AnalysisVisualization({ analysis }: AnalysisVisualizationProps) 
                     <div key={key} className="p-3 border rounded-lg bg-slate-50 dark:bg-slate-800">
                       <div className="flex justify-between items-center mb-2">
                         <span className="text-sm font-medium capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
-                        <span className={`text-sm font-bold ${getScoreColor(Number(value))}`}>{value}/10</span>
+                        <span className={`text-sm font-bold ${getScoreColor(Number(value.score))}`}>{value.score}/10</span>
                       </div>
-                      <Progress value={Number(value) * 10} className="h-2" />
+                      <Progress value={Number(value.score) * 10} className="h-2" />
                     </div>
                   ))}
                 </div>
@@ -191,9 +167,9 @@ export function AnalysisVisualization({ analysis }: AnalysisVisualizationProps) 
                     <div key={key} className="p-3 border rounded-lg bg-slate-50 dark:bg-slate-800">
                       <div className="flex justify-between items-center mb-2">
                         <span className="text-sm font-medium capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
-                        <span className={`text-sm font-bold ${getScoreColor(Number(value))}`}>{value}/10</span>
+                        <span className={`text-sm font-bold ${getScoreColor(Number(value.score))}`}>{value.score}/10</span>
                       </div>
-                      <Progress value={Number(value) * 10} className="h-2" />
+                      <Progress value={Number(value.score) * 10} className="h-2" />
                     </div>
                   ))}
                 </div>
@@ -210,9 +186,9 @@ export function AnalysisVisualization({ analysis }: AnalysisVisualizationProps) 
                     <div key={key} className="p-3 border rounded-lg bg-slate-50 dark:bg-slate-800">
                       <div className="flex justify-between items-center mb-2">
                         <span className="text-sm font-medium capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
-                        <span className={`text-sm font-bold ${getScoreColor(Number(value))}`}>{value}/10</span>
+                        <span className={`text-sm font-bold ${getScoreColor(Number(value.score))}`}>{value.score}/10</span>
                       </div>
-                      <Progress value={Number(value) * 10} className="h-2" />
+                      <Progress value={Number(value.score) * 10} className="h-2" />
                     </div>
                   ))}
                 </div>
@@ -229,9 +205,9 @@ export function AnalysisVisualization({ analysis }: AnalysisVisualizationProps) 
                     <div key={key} className="p-3 border rounded-lg bg-slate-50 dark:bg-slate-800">
                       <div className="flex justify-between items-center mb-2">
                         <span className="text-sm font-medium capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
-                        <span className={`text-sm font-bold ${getScoreColor(Number(value))}`}>{value}/10</span>
+                        <span className={`text-sm font-bold ${getScoreColor(Number(value.score))}`}>{value.score}/10</span>
                       </div>
-                      <Progress value={Number(value) * 10} className="h-2" />
+                      <Progress value={Number(value.score) * 10} className="h-2" />
                     </div>
                   ))}
                 </div>
@@ -239,14 +215,9 @@ export function AnalysisVisualization({ analysis }: AnalysisVisualizationProps) 
               
               <div>
                 <h4 className="font-semibold mb-3">Key Insights</h4>
-                <ul className="space-y-2">
-                  {analysis.elementsOfValue.insights.map((insight, index) => (
-                    <li key={index} className="flex items-start gap-2">
-                      <TrendingUp className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
-                      <span className="text-sm">{insight}</span>
-                    </li>
-                  ))}
-                </ul>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {analysis.elementsOfValue.summary}
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -266,15 +237,13 @@ export function AnalysisVisualization({ analysis }: AnalysisVisualizationProps) 
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-                {Object.entries(analysis.cliftonStrengths.themes)
-                  .sort(([, a], [, b]) => Number(b) - Number(a))
-                  .map(([theme, score]) => (
+                {analysis.cliftonStrengths.topThemes.map((theme, index) => (
                   <div key={theme} className="p-3 border rounded-lg bg-slate-50 dark:bg-slate-800">
                     <div className="flex justify-between items-center mb-2">
                       <span className="font-medium text-sm">{theme}</span>
-                      <span className={`text-sm font-bold ${getScoreColor(Number(score))}`}>{score}/10</span>
+                      <span className="text-sm font-bold text-purple-600">#{index + 1}</span>
                     </div>
-                    <Progress value={Number(score) * 10} className="h-2" />
+                    <div className="text-xs text-muted-foreground">Top Theme</div>
                   </div>
                 ))}
               </div>
@@ -282,10 +251,10 @@ export function AnalysisVisualization({ analysis }: AnalysisVisualizationProps) 
               <div>
                 <h4 className="font-semibold mb-3 text-lg">Strategic Recommendations</h4>
                 <ul className="space-y-3">
-                  {analysis.cliftonStrengths.recommendations.map((rec, index) => (
+                  {analysis.cliftonStrengths.topThemes.map((theme, index) => (
                     <li key={index} className="flex items-start gap-3 p-3 bg-purple-50 dark:bg-purple-950 rounded-lg">
                       <Star className="h-5 w-5 text-purple-600 mt-0.5 flex-shrink-0" />
-                      <span className="text-sm">{rec}</span>
+                      <span className="text-sm">{theme}</span>
                     </li>
                   ))}
                 </ul>
@@ -293,14 +262,9 @@ export function AnalysisVisualization({ analysis }: AnalysisVisualizationProps) 
               
               <div>
                 <h4 className="font-semibold mb-3 text-lg">Key Insights</h4>
-                <ul className="space-y-2">
-                  {analysis.cliftonStrengths.insights.map((insight, index) => (
-                    <li key={index} className="flex items-start gap-2">
-                      <CheckCircle className="h-4 w-4 text-purple-600 mt-0.5 flex-shrink-0" />
-                      <span className="text-sm">{insight}</span>
-                    </li>
-                  ))}
-                </ul>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {analysis.cliftonStrengths.summary}
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -316,31 +280,104 @@ export function AnalysisVisualization({ analysis }: AnalysisVisualizationProps) 
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              {/* All Recommendations - No Limits */}
-              {analysis.recommendations.map((rec, index) => (
-                <div key={index} className="p-5 border-2 rounded-lg bg-gradient-to-r from-orange-50 to-yellow-50 dark:from-orange-950 dark:to-yellow-950">
+              {/* High Priority Recommendations */}
+              {analysis.recommendations.highPriority.map((rec, index) => (
+                <div key={`high-${index}`} className="p-5 border-2 rounded-lg bg-gradient-to-r from-red-50 to-orange-50 dark:from-red-950 dark:to-orange-950">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-3">
-                      {getPriorityIcon(rec.priority)}
-                      <h4 className="font-semibold text-lg">{rec.category}</h4>
+                      <div className="w-6 h-6 bg-red-600 rounded-full flex items-center justify-center">
+                        <span className="text-white text-sm font-bold">{index + 1}</span>
+                      </div>
+                      <h4 className="font-semibold text-lg">{rec.title}</h4>
                     </div>
-                    <Badge className={`${getPriorityColor(rec.priority)} text-sm px-3 py-1`}>
-                      {rec.priority.toUpperCase()} PRIORITY
+                    <Badge className="bg-red-600 text-white text-sm px-3 py-1">
+                      HIGH PRIORITY
                     </Badge>
                   </div>
                   
                   <p className="text-base text-muted-foreground mb-4 leading-relaxed">{rec.description}</p>
                   
-                  <div>
-                    <h5 className="font-semibold mb-3 text-lg">Action Items ({rec.actionItems.length}):</h5>
-                    <ul className="space-y-2">
+                  <div className="mb-3">
+                    <h5 className="font-medium text-sm mb-2">Action Items:</h5>
+                    <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
                       {rec.actionItems.map((item, itemIndex) => (
-                        <li key={itemIndex} className="flex items-start gap-3 text-sm bg-white dark:bg-slate-800 p-3 rounded-lg border">
-                          <div className="w-2 h-2 bg-orange-600 rounded-full mt-2 flex-shrink-0" />
-                          <span className="leading-relaxed">{item}</span>
-                        </li>
+                        <li key={itemIndex}>{item}</li>
                       ))}
                     </ul>
+                  </div>
+                  
+                  <div className="flex gap-4 text-xs text-muted-foreground">
+                    <span>Impact: {rec.expectedImpact}</span>
+                    <span>Effort: {rec.effort}</span>
+                    <span>Timeline: {rec.timeline}</span>
+                  </div>
+                </div>
+              ))}
+
+              {/* Medium Priority Recommendations */}
+              {analysis.recommendations.mediumPriority.map((rec, index) => (
+                <div key={`medium-${index}`} className="p-5 border-2 rounded-lg bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-950 dark:to-orange-950">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-6 h-6 bg-yellow-600 rounded-full flex items-center justify-center">
+                        <span className="text-white text-sm font-bold">{index + 1}</span>
+                      </div>
+                      <h4 className="font-semibold text-lg">{rec.title}</h4>
+                    </div>
+                    <Badge className="bg-yellow-600 text-white text-sm px-3 py-1">
+                      MEDIUM PRIORITY
+                    </Badge>
+                  </div>
+                  
+                  <p className="text-base text-muted-foreground mb-4 leading-relaxed">{rec.description}</p>
+                  
+                  <div className="mb-3">
+                    <h5 className="font-medium text-sm mb-2">Action Items:</h5>
+                    <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
+                      {rec.actionItems.map((item, itemIndex) => (
+                        <li key={itemIndex}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  
+                  <div className="flex gap-4 text-xs text-muted-foreground">
+                    <span>Impact: {rec.expectedImpact}</span>
+                    <span>Effort: {rec.effort}</span>
+                    <span>Timeline: {rec.timeline}</span>
+                  </div>
+                </div>
+              ))}
+
+              {/* Low Priority Recommendations */}
+              {analysis.recommendations.lowPriority.map((rec, index) => (
+                <div key={`low-${index}`} className="p-5 border-2 rounded-lg bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-950 dark:to-blue-950">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-6 h-6 bg-green-600 rounded-full flex items-center justify-center">
+                        <span className="text-white text-sm font-bold">{index + 1}</span>
+                      </div>
+                      <h4 className="font-semibold text-lg">{rec.title}</h4>
+                    </div>
+                    <Badge className="bg-green-600 text-white text-sm px-3 py-1">
+                      LOW PRIORITY
+                    </Badge>
+                  </div>
+                  
+                  <p className="text-base text-muted-foreground mb-4 leading-relaxed">{rec.description}</p>
+                  
+                  <div className="mb-3">
+                    <h5 className="font-medium text-sm mb-2">Action Items:</h5>
+                    <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
+                      {rec.actionItems.map((item, itemIndex) => (
+                        <li key={itemIndex}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  
+                  <div className="flex gap-4 text-xs text-muted-foreground">
+                    <span>Impact: {rec.expectedImpact}</span>
+                    <span>Effort: {rec.effort}</span>
+                    <span>Timeline: {rec.timeline}</span>
                   </div>
                 </div>
               ))}

@@ -282,10 +282,10 @@ ${content}
 ANALYSIS REQUIREMENTS:
 
 1. GOLDEN CIRCLE ANALYSIS (Simon Sinek):
-   - WHY: Extract the specific mission statement, core purpose, or driving belief. Quote exact phrases from hero sections, about pages, mission statements.
-   - HOW: Identify the unique methodology, process, or approach. Look for specific frameworks, methodologies, processes, or differentiators mentioned.
-   - WHAT: List the specific products, services, or solutions offered. Extract exact product names, service categories, and specific offerings.
-   - WHO: Analyze testimonials, case studies, client logos, and success stories. Extract specific client names, company names, job titles, and success metrics.
+   - WHY: Extract the specific mission statement, core purpose, or driving belief. Quote exact phrases from hero sections, about pages, mission statements, and value propositions. Look for emotional core and driving motivation.
+   - HOW: Identify the unique methodology, process, or approach. Look for specific frameworks, methodologies, processes, or differentiators mentioned. Extract exact methodology names and systematic approaches.
+   - WHAT: List the specific products, services, or solutions offered. Extract exact product names, service categories, and specific offerings mentioned in the content.
+   - WHO: Analyze testimonials, case studies, client logos, and success stories. Extract specific client names, company names, job titles, success metrics, and target audience information.
 
 2. ELEMENTS OF VALUE ANALYSIS (Bain & Company):
    Score each of the 30 elements (0-10) based on evidence in the content:

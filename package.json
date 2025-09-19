@@ -17,8 +17,8 @@
     "db:studio": "prisma studio",
     "format": "prettier --write .",
     "type-check": "tsc --noEmit",
-        "setup:ai-keys": "node scripts/setup-ai-keys.js",
-        "test:ai": "node scripts/test-ai-analysis.js"
+    "setup:ai-keys": "node scripts/setup-ai-keys.js",
+    "test:ai": "node scripts/test-ai-analysis.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.63.0",
@@ -45,7 +45,6 @@
     "@trpc/server": "^10.45.0",
     "@types/cheerio": "^0.22.35",
     "bcryptjs": "^2.4.3",
-    "cheerio": "^1.1.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "framer-motion": "^10.16.4",
@@ -54,7 +53,9 @@
     "next": "14.0.4",
     "next-themes": "^0.2.1",
     "openai": "^4.52.0",
+    "playwright": "^1.55.0",
     "prisma": "^5.6.0",
+    "puppeteer": "^24.22.0",
     "react": "^18",
     "react-dom": "^18",
     "react-hook-form": "^7.48.2",
@@ -84,7 +85,6 @@
     "husky": "^8.0.3",
     "jsdom": "^23.0.1",
     "lint-staged": "^15.0.2",
-    "playwright": "^1.40.0",
     "postcss": "^8",
     "prettier": "^3.0.0",
     "prettier-plugin-tailwindcss": "^0.6.14",

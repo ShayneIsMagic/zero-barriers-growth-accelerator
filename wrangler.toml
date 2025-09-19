@@ -1,6 +1,5 @@
 name = "zero-barriers-growth-accelerator"
 compatibility_date = "2024-09-17"
-main = "src/pages/_worker.js"
 
 [env.production]
 vars = { NODE_ENV = "production" }

@@ -1,41 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { AuthService } from '@/lib/auth';
-import { prisma } from '@/lib/prisma';
+import { DemoAuthService } from '@/lib/demo-auth';
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, password, name } = await request.json();
+    const body = await request.json();
+    const { email, password, name } = body;
 
     if (!email || !password || !name) {
-      return NextResponse.json(
-        { error: 'Email, password, and name are required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Email, password, and name are required' }, { status: 400 });
     }
 
-    if (password.length < 8) {
-      return NextResponse.json(
-        { error: 'Password must be at least 8 characters long' },
-        { status: 400 }
-      );
+    // For demo purposes, create a new demo user
+    const user = await DemoAuthService.signUp(email, password, name);
+    
+    if (!user) {
+      return NextResponse.json({ error: 'User already exists' }, { status: 409 });
     }
 
-    // Check if user already exists
-    const existingUser = await prisma.user.findUnique({
-      where: { email },
-    });
+    // In a real app, you'd generate a JWT token here
+    const token = 'demo-token-' + Date.now();
 
-    if (existingUser) {
-      return NextResponse.json(
-        { error: 'User with this email already exists' },
-        { status: 409 }
-      );
-    }
-
-    const user = await AuthService.createUser(email, password, name);
-    const token = await AuthService.createToken(user);
-
-    const response = NextResponse.json({
+    return NextResponse.json({
       user: {
         id: user.id,
         email: user.email,
@@ -43,24 +28,10 @@ export async function POST(request: NextRequest) {
         role: user.role,
       },
       token,
+      message: 'Sign up successful'
     });
-
-    // Set HTTP-only cookie
-    response.cookies.set('auth-token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 7, // 7 days
-    });
-
-    return response;
   } catch (error) {
-    console.error('Signup error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    console.error('Sign up error:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
-
-

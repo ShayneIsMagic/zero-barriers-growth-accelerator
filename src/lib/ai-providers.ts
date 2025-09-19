@@ -27,33 +27,92 @@ export interface AnalysisRequest {
 }
 
 export interface AnalysisResult {
+  id: string;
+  url: string;
+  createdAt: string;
   goldenCircle: {
-    why: string;
-    how: string;
-    what: string;
+    why: {
+      statement: string;
+      source: string;
+      score: number;
+      insights: string[];
+    };
+    how: {
+      methodology: string;
+      framework: string;
+      score: number;
+      insights: string[];
+    };
+    what: {
+      offerings: string[];
+      categories: string[];
+      score: number;
+      insights: string[];
+    };
+    who: {
+      testimonials: Array<{
+        client: string;
+        company: string;
+        title: string;
+        quote: string;
+        results: string;
+      }>;
+      targetAudience: string;
+      score: number;
+      insights: string[];
+    };
     overallScore: number;
-    insights: string[];
+    summary: string;
   };
   elementsOfValue: {
-    functional: { [key: string]: number };
-    emotional: { [key: string]: number };
-    lifeChanging: { [key: string]: number };
-    socialImpact: { [key: string]: number };
+    functional: { [key: string]: { score: number; evidence: string } };
+    emotional: { [key: string]: { score: number; evidence: string } };
+    lifeChanging: { [key: string]: { score: number; evidence: string } };
+    socialImpact: { [key: string]: { score: number; evidence: string } };
     overallScore: number;
-    insights: string[];
+    topElements: string[];
+    summary: string;
   };
   cliftonStrengths: {
-    themes: { [key: string]: number };
-    recommendations: string[];
+    executing: { [key: string]: { score: number; evidence: string } };
+    influencing: { [key: string]: { score: number; evidence: string } };
+    relationshipBuilding: { [key: string]: { score: number; evidence: string } };
+    strategicThinking: { [key: string]: { score: number; evidence: string } };
     overallScore: number;
-    insights: string[];
+    topThemes: string[];
+    summary: string;
   };
-  recommendations: Array<{
-    priority: 'high' | 'medium' | 'low';
-    category: string;
-    description: string;
-    actionItems: string[];
-  }>;
+  recommendations: {
+    highPriority: Array<{
+      category: string;
+      title: string;
+      description: string;
+      actionItems: string[];
+      expectedImpact: string;
+      effort: string;
+      timeline: string;
+    }>;
+    mediumPriority: Array<{
+      category: string;
+      title: string;
+      description: string;
+      actionItems: string[];
+      expectedImpact: string;
+      effort: string;
+      timeline: string;
+    }>;
+    lowPriority: Array<{
+      category: string;
+      title: string;
+      description: string;
+      actionItems: string[];
+      expectedImpact: string;
+      effort: string;
+      timeline: string;
+    }>;
+    summary: string;
+    nextSteps: string[];
+  };
   overallScore: number;
   summary: string;
 }
@@ -214,16 +273,26 @@ export class AIProviderService {
       }
 
       try {
-        // Clean the JSON string
-        const cleanedJson = jsonMatch[0]
+        // Clean the JSON string more aggressively
+        let cleanedJson = jsonMatch[0]
           .replace(/```json\n?/g, '')
           .replace(/```\n?/g, '')
+          .replace(/^[^{]*/, '') // Remove any text before the first {
+          .replace(/[^}]*$/, '') // Remove any text after the last }
           .trim();
         
+        // Try to fix common JSON issues
+        cleanedJson = cleanedJson
+          .replace(/,(\s*[}\]])/g, '$1') // Remove trailing commas
+          .replace(/([{,]\s*)(\w+):/g, '$1"$2":') // Quote unquoted keys
+          .replace(/:\s*([^",{\[\s][^,}\]]*?)(\s*[,}])/g, ': "$1"$2'); // Quote unquoted string values
+        
+        console.log('Cleaned JSON preview:', cleanedJson.substring(0, 200) + '...');
         return JSON.parse(cleanedJson);
       } catch (parseError) {
         console.error('Gemini JSON parsing failed:', parseError);
-        console.error('Raw JSON:', jsonMatch[0].substring(0, 500) + '...');
+        console.error('Raw response:', rawAnalysis.substring(0, 1000) + '...');
+        console.error('Extracted JSON:', jsonMatch[0].substring(0, 1000) + '...');
         throw new Error(`Gemini returned invalid JSON: ${parseError instanceof Error ? parseError.message : 'Unknown error'}`);
       }
     } catch (error) {
@@ -287,8 +356,12 @@ export class AIProviderService {
   }
 
   private buildAnalysisPrompt(request: AnalysisRequest): string {
-    const { buildComprehensiveAnalysisPrompt } = require('./analysis-templates');
-    return buildComprehensiveAnalysisPrompt(request.content, request.url);
+    const { buildComprehensiveAnalysisPrompt } = require('./analysis-prompts');
+    return buildComprehensiveAnalysisPrompt({
+      url: request.url || '',
+      content: request.content,
+      pageType: 'general'
+    });
   }
 
   getAvailableProviders(): AIProvider[] {

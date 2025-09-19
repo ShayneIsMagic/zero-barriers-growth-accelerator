@@ -11,9 +11,9 @@ import { CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 
 export default function TestPage() {
   const { user, signIn, signOut, loading } = useAuth();
-  const [testEmail, setTestEmail] = useState('shayne@devpipeline.com');
-  const [testPassword, setTestPassword] = useState('admin123');
-  const [testUrl, setTestUrl] = useState('https://apple.com');
+  const [testEmail, setTestEmail] = useState('');
+  const [testPassword, setTestPassword] = useState('');
+  const [testUrl, setTestUrl] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);

@@ -1,6 +1,6 @@
 'use client';
 
-import { AnalysisResult } from '@/lib/analysis-client';
+import { AnalysisResult } from '@/lib/ai-providers';
 import { AnalysisVisualization } from './AnalysisVisualization';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ExternalLink } from 'lucide-react';

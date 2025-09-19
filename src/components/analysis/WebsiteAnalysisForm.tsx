@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, ExternalLink, CheckCircle, AlertCircle } from 'lucide-react';
-import { AnalysisClient, AnalysisResult } from '@/lib/analysis-client';
+import { AnalysisResult } from '@/lib/ai-providers';
 import { AIProviderSelector, AI_PROVIDERS } from './AIProviderSelector';
 import { AIProvider } from '@/lib/ai-providers';
 import { EnhancedAIService } from '@/lib/enhanced-ai-service';
@@ -77,8 +77,21 @@ export function WebsiteAnalysisForm({ onAnalysisComplete }: WebsiteAnalysisFormP
         });
       }, 200);
 
-      // Use enhanced AI service for analysis
-      const result = await AnalysisClient.analyzeWebsite(url, selectedProvider);
+      // Use the API directly
+      const response = await fetch('/api/analyze/website', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ url, provider: selectedProvider }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Analysis failed: ${response.statusText}`);
+      }
+
+      const apiResult = await response.json();
+      const result = apiResult.analysis;
       
       clearInterval(progressInterval);
       setProgress(100);

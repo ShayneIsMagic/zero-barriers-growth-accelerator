@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { WebsiteAnalysisForm } from '@/components/analysis/WebsiteAnalysisForm';
 import { AnalysisResults } from '@/components/analysis/AnalysisResults';
-import { AnalysisClient, AnalysisResult } from '@/lib/analysis-client';
+import { AnalysisResult } from '@/lib/ai-providers';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -17,8 +17,16 @@ export default function AnalyzePage() {
 
   useEffect(() => {
     // Load saved analyses from localStorage
-    const savedAnalyses = AnalysisClient.getAnalyses();
-    setAnalyses(savedAnalyses);
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = localStorage.getItem('zero-barriers-analyses');
+        const savedAnalyses = stored ? JSON.parse(stored) : [];
+        setAnalyses(savedAnalyses);
+      } catch (error) {
+        console.error('Error loading analyses:', error);
+        setAnalyses([]);
+      }
+    }
   }, []);
 
   const handleAnalysisComplete = (analysis: AnalysisResult) => {
@@ -27,7 +35,19 @@ export default function AnalyzePage() {
   };
 
   const handleDeleteAnalysis = (id: string) => {
-    AnalysisClient.deleteAnalysis(id);
+    // Update localStorage
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = localStorage.getItem('zero-barriers-analyses');
+        const analyses = stored ? JSON.parse(stored) : [];
+        const filtered = analyses.filter((a: AnalysisResult) => a.id !== id);
+        localStorage.setItem('zero-barriers-analyses', JSON.stringify(filtered));
+      } catch (error) {
+        console.error('Error deleting analysis:', error);
+      }
+    }
+    
+    // Update state
     setAnalyses(prev => prev.filter(a => a.id !== id));
     if (selectedAnalysis?.id === id) {
       setSelectedAnalysis(null);
@@ -101,20 +121,22 @@ export default function AnalyzePage() {
                   </CardDescription>
                 </div>
                 {analyses.length > 0 && (
-                  <Button
-                    onClick={() => {
-                      if (confirm('Are you sure you want to clear all analyses? This action cannot be undone.')) {
-                        analyses.forEach(analysis => AnalysisClient.deleteAnalysis(analysis.id));
-                        setAnalyses([]);
-                        setSelectedAnalysis(null);
-                      }
-                    }}
-                    variant="outline"
-                    size="sm"
-                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+        <Button
+          onClick={() => {
+            if (confirm('Are you sure you want to clear all analyses? This action cannot be undone.')) {
+              if (typeof window !== 'undefined') {
+                localStorage.removeItem('zero-barriers-analyses');
+              }
+              setAnalyses([]);
+              setSelectedAnalysis(null);
+            }
+          }}
+          variant="outline"
+          size="sm"
+          className="text-red-600 hover:text-red-700 hover:bg-red-50"
+        >
+          <Trash2 className="h-4 w-4" />
+        </Button>
                 )}
               </div>
             </CardHeader>
